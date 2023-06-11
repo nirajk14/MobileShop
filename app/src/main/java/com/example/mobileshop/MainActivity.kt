@@ -1,5 +1,6 @@
 package com.example.mobileshop
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,48 +11,81 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mobileshop.ApiRecyclerView.ApiState
 import com.example.mobileshop.databinding.ActivityMainBinding
 import androidx.activity.viewModels
+import com.example.mobileshop.db.AppDatabase
+import com.example.mobileshop.db.DBState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    private val PREFS_NAME = "MyPrefs"
+    private val PREF_FIRST_RUN = "isFirstRun"
     private lateinit var binding: ActivityMainBinding
     private lateinit var productAdapter: ProductAdapter
+
+//    var appDb = AppDatabase.getDatabase(this)
     private val mainViewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val isFirstRun = sharedPreferences.getBoolean(PREF_FIRST_RUN, true)
+
+        if (isFirstRun) {
+            // Code to be executed only once during installation
+            initRepository()
+
+            // Update the flag to indicate that the code has been executed
+            val editor = sharedPreferences.edit()
+            editor.putBoolean(PREF_FIRST_RUN, false)
+            editor.apply()
+        }
+
+
         initRecyclerView()
 
-        mainViewModel.getProducts()
+
+
+
+
+        mainViewModel.getAllProducts()
         lifecycleScope.launchWhenStarted {
-            mainViewModel.productStateFlow.collect{
+            mainViewModel.productDataStateFlow.collect{
                 when (it) {
-                    is ApiState.Loading->{
+                    is DBState.Loading->{
                         binding.recyclerView.isVisible = false
                         binding.progressBar.isVisible = true
                     }
-                    is ApiState.Failure-> {
+                    is DBState.Failure-> {
                         binding.recyclerView.isVisible = false
                         binding.progressBar.isVisible = false
-                        Log.d("HEHE YOU GOT AN ERROR", "GET REKT IT'S API CALL ${it.msg}")
+                        Log.d("HEHE YOU GOT AN ERROR", "GET REKT IT'S DB CALL ${it.msg}")
 
                     }
 
-                    is ApiState.Success-> {
+                    is DBState.Success-> {
                         binding.recyclerView.isVisible = true
                         binding.progressBar.isVisible=false
-                        productAdapter.setData(it.data.products)
+                        productAdapter.setData(it.data)
                     }
 
-                    is ApiState.Empty-> {
+                    is DBState.Empty-> {
 
                     }
                 }
             }
         }
 
+    }
+
+    private fun initRepository() {
+        GlobalScope.launch(Dispatchers.IO) {
+
+        }
     }
 
     private fun initRecyclerView() {

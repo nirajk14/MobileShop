@@ -1,9 +1,16 @@
 package com.example.mobileshop.di
 
+import android.content.Context
+import androidx.room.Room
 import com.example.mobileshop.ApiRecyclerView.ApiService
+import com.example.mobileshop.ApiRecyclerView.ApiServiceImpl
+import com.example.mobileshop.db.AppDatabase
+import com.example.mobileshop.db.ProductDao
+import com.example.mobileshop.repository.MainRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -24,4 +31,23 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesDatabase(@ApplicationContext context: Context) : AppDatabase =
+        Room.databaseBuilder(context,AppDatabase::class.java,"userDatabase")
+            .build()
+
+    @Provides
+    fun providesProductDao(appDatabase: AppDatabase) : ProductDao =
+        appDatabase.productDao()
+
+
+    @Provides
+    fun provideApiService(): ApiServiceImpl =
+        ApiServiceImpl(providesApiService(providesUrl()))
+    @Provides
+    fun providesMainRepository(productDao: ProductDao): MainRepository =    MainRepository(
+        provideApiService(), productDao
+    )
 }

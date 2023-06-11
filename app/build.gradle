@@ -66,4 +66,11 @@ dependencies {
 
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
     implementation 'androidx.activity:activity-ktx:1.7.2'
+
+
+    def room_version ="2.5.0" // don't use 2.4.1 use only 2.5.0+ to fix the suspend functions
+
+    implementation "androidx.room:room-ktx:$room_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 }

@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mobileshop.ApiRecyclerView.Products
 import com.example.mobileshop.databinding.ProductCardBinding
+import com.example.mobileshop.db.ProductEntity
 import com.squareup.picasso.Picasso
 
-class ProductAdapter(private var mList: List<Products>,
-                     private val onItemClick:(Products,position:Int)->Unit):
+class ProductAdapter(private var mList: List<ProductEntity>,
+                     private val onItemClick:(ProductEntity,position:Int)->Unit):
     RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
     var _mList=mList
     private lateinit var binding: ProductCardBinding
@@ -42,7 +43,7 @@ class ProductAdapter(private var mList: List<Products>,
 
     }
 
-    fun setData(productList: List<Products>){
+    fun setData(productList: List<ProductEntity>){
         this.mList=productList
         _mList=productList
         notifyDataSetChanged()

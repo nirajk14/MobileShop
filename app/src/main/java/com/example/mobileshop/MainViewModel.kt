@@ -1,13 +1,17 @@
 package com.example.mobileshop
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobileshop.ApiRecyclerView.ApiState
+import com.example.mobileshop.db.DBState
+import com.example.mobileshop.db.ProductEntity
 import com.example.mobileshop.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,8 +19,9 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val mainRepository: MainRepository) : ViewModel() {
 
     private val _productStateFlow: MutableStateFlow<ApiState> = MutableStateFlow(ApiState.Empty)
-
     val productStateFlow: StateFlow<ApiState> = _productStateFlow
+    private val _productDataStateFlow: MutableStateFlow<DBState> = MutableStateFlow(DBState.Empty)
+    val productDataStateFlow: StateFlow<DBState> = _productDataStateFlow
 
     fun getProducts() = viewModelScope.launch {
         _productStateFlow.value= ApiState.Loading
@@ -29,6 +34,18 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
                     _productStateFlow.value = ApiState.Success(data)
             }
 
+    }
+
+    fun getAllProducts() = viewModelScope.launch {
+        _productDataStateFlow.value= DBState.Loading
+        mainRepository.getAllProducts()
+            .catch { e->
+                _productDataStateFlow.value= DBState.Failure(e)
+            }
+            .collect {
+                    data ->
+                _productDataStateFlow.value = DBState.Success(data)
+            }
     }
 
 }
