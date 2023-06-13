@@ -2,11 +2,12 @@ package com.example.mobileshop.db
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
 interface ProductDao {
-    @Insert
+    @Insert (onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(product: ProductEntity)
 
     @Query("SELECT * FROM products")

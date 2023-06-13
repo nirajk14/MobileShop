@@ -1,5 +1,6 @@
 package com.example.mobileshop.repository
 
+import android.util.Log
 import com.example.mobileshop.ApiRecyclerView.ApiResponse
 import com.example.mobileshop.ApiRecyclerView.ApiServiceImpl
 import com.example.mobileshop.ApiRecyclerView.Products
@@ -22,6 +23,7 @@ private val productDao: ProductDao) {
 
     suspend fun insertProduct(products: Products) {
         val productEntity = ProductEntity(
+            id = products.id!!,
             title = products.title,
             description = products.description,
             price = products.price,
@@ -37,13 +39,12 @@ private val productDao: ProductDao) {
     }
 
     suspend fun insertApiDataToDB(apiResponse: ApiResponse) {
-        for (product in apiResponse.products) {
+        apiResponse.products.map { product ->
             insertProduct(product)
         }
     }
 
-    suspend fun getAllProducts(): Flow<List<ProductEntity>> = flow{
-        productDao.deleteAllProducts()
+    suspend fun getAllProducts(refresh: Boolean): Flow<List<ProductEntity>> = flow{
         insertApiDataToDB(apiServiceImpl.getProducts())
         emit(productDao.getAllProducts())
     }.flowOn(Dispatchers.IO)

@@ -13,6 +13,7 @@ import com.example.mobileshop.databinding.ActivityMainBinding
 import androidx.activity.viewModels
 import com.example.mobileshop.db.AppDatabase
 import com.example.mobileshop.db.DBState
+import com.example.mobileshop.db.ProductEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -21,10 +22,10 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private val PREFS_NAME = "MyPrefs"
-    private val PREF_FIRST_RUN = "isFirstRun"
     private lateinit var binding: ActivityMainBinding
     private lateinit var productAdapter: ProductAdapter
+    var refresh= false
+
 
 //    var appDb = AppDatabase.getDatabase(this)
     private val mainViewModel: MainViewModel by viewModels()
@@ -32,27 +33,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val isFirstRun = sharedPreferences.getBoolean(PREF_FIRST_RUN, true)
 
-        if (isFirstRun) {
-            // Code to be executed only once during installation
-            initRepository()
+        observeProductData(binding)
 
-            // Update the flag to indicate that the code has been executed
-            val editor = sharedPreferences.edit()
-            editor.putBoolean(PREF_FIRST_RUN, false)
-            editor.apply()
+        binding.buttonRefresh.setOnClickListener {
+            mainViewModel.getAllProducts(true)
         }
 
+        mainViewModel.getAllProducts(refresh)
 
-        initRecyclerView()
+    }
 
-
-
-
-
-        mainViewModel.getAllProducts()
+    private fun observeProductData(binding: ActivityMainBinding) {
+        println("observeProductData")
         lifecycleScope.launchWhenStarted {
             mainViewModel.productDataStateFlow.collect{
                 when (it) {
@@ -70,7 +63,8 @@ class MainActivity : AppCompatActivity() {
                     is DBState.Success-> {
                         binding.recyclerView.isVisible = true
                         binding.progressBar.isVisible=false
-                        productAdapter.setData(it.data)
+                        initRecyclerView(it.data)
+//                        productAdapter.setData(it.data)
                     }
 
                     is DBState.Empty-> {
@@ -79,18 +73,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
 
-    private fun initRepository() {
-        GlobalScope.launch(Dispatchers.IO) {
 
-        }
-    }
-
-    private fun initRecyclerView() {
-        productAdapter=ProductAdapter(ArrayList(), {products, position ->
-            val clickedItem=productAdapter._mList[position]
+    private fun initRecyclerView(productList: List<ProductEntity>) {
+        productAdapter=ProductAdapter(productList, {products, position ->
+            val clickedItem=productAdapter.mList[position]
             val intent= Intent(this,SingleView::class.java)
             intent.putExtra("singleItemData", clickedItem)
             startActivity(intent)

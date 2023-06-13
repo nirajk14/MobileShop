@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.mobileshop.ApiRecyclerView.Products
 import com.example.mobileshop.databinding.ActivitySingleViewBinding
+import com.example.mobileshop.db.ProductEntity
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,7 +18,7 @@ class SingleView : AppCompatActivity() {
         binding=ActivitySingleViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var product= intent.getSerializableExtra("singleItemData") as Products
+        var product= intent.getSerializableExtra("singleItemData") as ProductEntity
         if (product!=null){
             binding.txtView.text=product?.title.toString()
             binding.txtView1.text=product?.brand.toString()
