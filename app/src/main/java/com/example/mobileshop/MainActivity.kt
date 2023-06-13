@@ -77,12 +77,12 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initRecyclerView(productList: List<ProductEntity>) {
-        productAdapter=ProductAdapter(productList, {products, position ->
-            val clickedItem=productAdapter.mList[position]
-            val intent= Intent(this,SingleView::class.java)
+        productAdapter=ProductAdapter(productList) { position ->
+            val clickedItem = productAdapter.mList[position]
+            val intent = Intent(this, SingleView::class.java)
             intent.putExtra("singleItemData", clickedItem)
             startActivity(intent)
-        } )
+        }
         binding.recyclerView.apply {
             setHasFixedSize(true)
             layoutManager= LinearLayoutManager(this@MainActivity)

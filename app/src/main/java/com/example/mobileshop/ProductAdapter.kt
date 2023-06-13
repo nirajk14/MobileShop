@@ -13,7 +13,7 @@ import com.example.mobileshop.db.ProductEntity
 import com.squareup.picasso.Picasso
 
 class ProductAdapter(var mList: List<ProductEntity>,
-                     private val onItemClick:(ProductEntity,position:Int)->Unit):
+                     private val onItemClick:(position:Int)->Unit):
     RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
     private lateinit var binding: ProductCardBinding
 
@@ -45,7 +45,7 @@ class ProductAdapter(var mList: List<ProductEntity>,
 
         holder.itemView.setOnClickListener {
 
-            onItemClick(product,position)
+            onItemClick(position)
 
         }
 
