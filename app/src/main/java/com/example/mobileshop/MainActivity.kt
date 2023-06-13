@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mobileshop.ApiRecyclerView.ApiState
 import com.example.mobileshop.databinding.ActivityMainBinding
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.mobileshop.db.AppDatabase
 import com.example.mobileshop.db.DBState
 import com.example.mobileshop.db.ProductEntity
@@ -36,9 +38,13 @@ class MainActivity : AppCompatActivity() {
 
         observeProductData(binding)
 
-        binding.buttonRefresh.setOnClickListener {
+
+        binding.swipeRefresh.setOnRefreshListener {
             mainViewModel.getAllProducts(true)
+            binding.swipeRefresh.isRefreshing = false
+
         }
+
 
         mainViewModel.getAllProducts(refresh)
 
@@ -46,8 +52,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun observeProductData(binding: ActivityMainBinding) {
         println("observeProductData")
-        lifecycleScope.launchWhenStarted {
-            mainViewModel.productDataStateFlow.collect{
+        lifecycleScope.launch {
+
+            //launch when X is deprecated hence use .launch{ and then put repeatOnLifecycle(STATE){ Put code here }}
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                mainViewModel.productDataStateFlow.collect{
                 when (it) {
                     is DBState.Loading->{
                         binding.recyclerView.isVisible = false
@@ -72,6 +81,8 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+            }
+
         }
     }
 
