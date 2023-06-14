@@ -1,4 +1,4 @@
-package com.example.mobileshop.ApiRecyclerView
+package com.example.mobileshop.api_recycler_view
 
 
 import javax.inject.Inject

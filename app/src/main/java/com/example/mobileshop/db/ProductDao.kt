@@ -7,7 +7,7 @@ import androidx.room.Query
 
 @Dao
 interface ProductDao {
-    @Insert (onConflict = OnConflictStrategy.IGNORE)
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(product: ProductEntity)
 
     @Query("SELECT * FROM products")

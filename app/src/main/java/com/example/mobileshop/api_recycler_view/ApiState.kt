@@ -1,4 +1,4 @@
-package com.example.mobileshop.ApiRecyclerView
+package com.example.mobileshop.api_recycler_view
 
 sealed class ApiState {
     object Loading: ApiState()

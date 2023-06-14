@@ -1,17 +1,15 @@
 package com.example.mobileshop
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mobileshop.ApiRecyclerView.ApiState
+import com.example.mobileshop.api_recycler_view.ApiState
+import com.example.mobileshop.api_recycler_view.Products
 import com.example.mobileshop.db.DBState
-import com.example.mobileshop.db.ProductEntity
 import com.example.mobileshop.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -47,6 +45,10 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
                     data ->
                 _productDataStateFlow.value = DBState.Success(data)
             }
+    }
+
+    fun insertProduct(product : Products) = viewModelScope.launch {
+        mainRepository.insertProduct(product)
     }
 
 }

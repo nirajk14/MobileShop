@@ -1,10 +1,8 @@
-package com.example.mobileshop.ApiRecyclerView
+package com.example.mobileshop.api_recycler_view
 
 
 import retrofit2.http.GET
 import retrofit2.http.Headers
-import retrofit2.http.POST
-import retrofit2.http.Url
 
 interface ApiService {
 

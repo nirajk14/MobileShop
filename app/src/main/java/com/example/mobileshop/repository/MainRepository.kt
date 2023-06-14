@@ -1,10 +1,8 @@
 package com.example.mobileshop.repository
 
-import android.util.Log
-import com.example.mobileshop.ApiRecyclerView.ApiResponse
-import com.example.mobileshop.ApiRecyclerView.ApiServiceImpl
-import com.example.mobileshop.ApiRecyclerView.Products
-import com.example.mobileshop.db.AppDatabase
+import com.example.mobileshop.api_recycler_view.ApiResponse
+import com.example.mobileshop.api_recycler_view.ApiServiceImpl
+import com.example.mobileshop.api_recycler_view.Products
 import com.example.mobileshop.db.ProductDao
 import com.example.mobileshop.db.ProductEntity
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +43,8 @@ private val productDao: ProductDao) {
     }
 
     suspend fun getAllProducts(refresh: Boolean): Flow<List<ProductEntity>> = flow{
-        insertApiDataToDB(apiServiceImpl.getProducts())
+        if (refresh)
+            insertApiDataToDB(apiServiceImpl.getProducts())
         emit(productDao.getAllProducts())
     }.flowOn(Dispatchers.IO)
 

@@ -2,8 +2,8 @@ package com.example.mobileshop.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.mobileshop.ApiRecyclerView.ApiService
-import com.example.mobileshop.ApiRecyclerView.ApiServiceImpl
+import com.example.mobileshop.api_recycler_view.ApiService
+import com.example.mobileshop.api_recycler_view.ApiServiceImpl
 import com.example.mobileshop.db.AppDatabase
 import com.example.mobileshop.db.ProductDao
 import com.example.mobileshop.repository.MainRepository

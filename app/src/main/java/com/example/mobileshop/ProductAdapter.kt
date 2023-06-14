@@ -1,19 +1,17 @@
 package com.example.mobileshop
 
-import android.media.Image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mobileshop.ApiRecyclerView.Products
 import com.example.mobileshop.databinding.ProductCardBinding
 import com.example.mobileshop.db.ProductEntity
 import com.squareup.picasso.Picasso
 
 class ProductAdapter(var mList: List<ProductEntity>,
-                     private val onItemClick:(position:Int)->Unit):
+                     private val onItemClick:(product: ProductEntity)->Unit):
     RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
     private lateinit var binding: ProductCardBinding
 
@@ -45,7 +43,7 @@ class ProductAdapter(var mList: List<ProductEntity>,
 
         holder.itemView.setOnClickListener {
 
-            onItemClick(position)
+            onItemClick(product)
 
         }
 
