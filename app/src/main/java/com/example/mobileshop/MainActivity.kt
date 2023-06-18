@@ -77,12 +77,17 @@ class MainActivity : AppCompatActivity() {
         var switchBool= sharedPreferences.getBoolean("SWITCH_STATE", false)
 
         if(firstRun){
+            binding.mainAppBar.title="First run"
+            println("FIrst run")
             mainViewModel.getAllProducts(true)
 
             editor.apply {
                 putBoolean("FIRST_RUN",false)
-            }
+            }.apply()
 
+        }
+        else {
+            binding.mainAppBar.title="Not first run"
         }
 
 
