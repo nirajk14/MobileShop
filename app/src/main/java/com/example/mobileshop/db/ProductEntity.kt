@@ -16,5 +16,6 @@ data class ProductEntity(
     val brand: String? = null,
     val category: String? = null,
     val thumbnail: String? = null,
-    val images: List<String> = emptyList()
+    val images: List<String> = emptyList(),
+    val localImages: Boolean?
 ) : java.io.Serializable

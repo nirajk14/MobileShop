@@ -19,7 +19,7 @@
         android:theme="@style/Theme.MobileShop"
         tools:targetApi="31">
         <activity
-            android:name=".SingleView"
+            android:name=".SingleViewActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

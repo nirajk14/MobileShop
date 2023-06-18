@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.mobileshop.api_recycler_view.ApiService
 import com.example.mobileshop.api_recycler_view.ApiServiceImpl
 import com.example.mobileshop.db.AppDatabase
+import com.example.mobileshop.db.LocalImageDao
 import com.example.mobileshop.db.ProductDao
 import com.example.mobileshop.repository.MainRepository
 import dagger.Module
@@ -43,12 +44,16 @@ object AppModule {
     fun providesProductDao(appDatabase: AppDatabase) : ProductDao =
         appDatabase.productDao()
 
+    @Provides
+    fun providesLocalImageDao(appDatabase: AppDatabase): LocalImageDao =
+        appDatabase.localImageDao()
+
 
     @Provides
     fun provideApiService(): ApiServiceImpl =
         ApiServiceImpl(providesApiService(providesUrl()))
     @Provides
-    fun providesMainRepository(productDao: ProductDao): MainRepository =    MainRepository(
-        provideApiService(), productDao
+    fun providesMainRepository(productDao: ProductDao, localImageDao: LocalImageDao): MainRepository =    MainRepository(
+        provideApiService(), productDao, localImageDao
     )
 }

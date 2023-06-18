@@ -5,14 +5,14 @@ import com.google.gson.annotations.SerializedName
 
 final data class ApiResponse(
 
-    @SerializedName("products") var products: ArrayList<Products> = arrayListOf(),
+    @SerializedName("products") var products: ArrayList<Product> = arrayListOf(),
     @SerializedName("total") var total: Int? = null,
     @SerializedName("skip") var skip: Int? = null,
     @SerializedName("limit") var limit: Int? = null
 
 ): java.io.Serializable
 
-data class Products(
+data class Product(
 
     @SerializedName("id") var id: Int? = null,
     @SerializedName("title") var title: String? = null,

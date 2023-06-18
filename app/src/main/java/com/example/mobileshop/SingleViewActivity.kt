@@ -4,15 +4,15 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.example.mobileshop.api_recycler_view.Products
 import com.example.mobileshop.databinding.ActivitySingleViewBinding
+import com.example.mobileshop.db.LocalImageEntity
 import com.example.mobileshop.db.ProductEntity
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class SingleView : AppCompatActivity() {
+class SingleViewActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySingleViewBinding
     private val mainViewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,25 +52,34 @@ class SingleView : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 100 && resultCode== RESULT_OK) {
             Picasso.get().load(data?.data).into(binding.imgView)
-            var products = intent.getSerializableExtra("singleItemData") as ProductEntity
-
-            val product = Products(
-                id = products.id!!,
-                title = products.title,
-                description = products.description,
-                price = products.price,
-                discountPercentage = products.discountPercentage,
-                rating = products.rating,
-                stock = products.stock,
-                brand = products.brand,
-                category = products.category,
-                thumbnail = products.thumbnail,
-                images = arrayListOf(data?.data.toString(),"Blank") as ArrayList<String>
-            )
-
-            mainViewModel.insertProduct(product)
+            var productEntity = intent.getSerializableExtra("singleItemData") as ProductEntity
+//
+//            val product = Products(
+//                id = products.id!!,
+//                title = products.title,
+//                description = products.description,
+//                price = products.price,
+//                discountPercentage = products.discountPercentage,
+//                rating = products.rating,
+//                stock = products.stock,
+//                brand = products.brand,
+//                category = products.category,
+//                thumbnail = products.thumbnail,
+//                images = arrayListOf(data?.data.toString(),"Blank") as ArrayList<String>
+//            )
+//
+//            mainViewModel.insertProduct(product)
 
             //todo look for copy copyTo func or can we even use map
+
+            val localImageEntity = LocalImageEntity(
+                id= null,
+                imageUrl = data?.data.toString(),
+                productId = productEntity.id
+            )
+            mainViewModel.insertLocalImage(localImageEntity,productEntity)
+
+
         }
     }
 

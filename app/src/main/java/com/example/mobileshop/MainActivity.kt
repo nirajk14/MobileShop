@@ -1,5 +1,6 @@
 package com.example.mobileshop
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -19,11 +20,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.mobileshop.db.DBState
 import com.example.mobileshop.db.ProductEntity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
 
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     private var isReadPermissionGranted = false
@@ -42,6 +45,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        checkPermissionAvailability()
+        requestPermission()
+
+        observeProductData(binding)
+
+        binding.swipeRefresh.setOnRefreshListener {
+            mainViewModel.getAllProducts(true)
+            binding.swipeRefresh.isRefreshing = false
+
+        }
+
+        binding.mainAppBar.setOnMenuItemClickListener{
+            //todo loadfromLocalFile() should be configured in adapter probably
+            true
+
+        }
+        mainViewModel.getAllProducts(refresh)
+
+    }
+
+    private fun checkPermissionAvailability() {
         permissionLauncher= registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){
                 permissions ->
             isReadPermissionGranted = permissions[android.Manifest.permission.READ_EXTERNAL_STORAGE]?: isReadPermissionGranted
@@ -54,29 +80,12 @@ class MainActivity : AppCompatActivity() {
 
 
         }
-
-        requestPermission()
-
-        observeProductData(binding)
-
-
-        binding.swipeRefresh.setOnRefreshListener {
-            mainViewModel.getAllProducts(true)
-            binding.swipeRefresh.isRefreshing = false
-
-        }
-
-
-
-
-        mainViewModel.getAllProducts(refresh)
-
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        mainViewModel.getAllProducts(false)
-//    }
+    override fun onResume() {
+        super.onResume()
+        mainViewModel.getAllProducts(false)
+    }
 
     private fun requestPermission() {
         isReadPermissionGranted = ContextCompat.checkSelfPermission(
@@ -119,33 +128,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeProductData(binding: ActivityMainBinding) {
-        println("observeProductData")
+
         lifecycleScope.launch {
 
             //launch when X is deprecated hence use .launch{ and then put repeatOnLifecycle(STATE){ Put code here }}
             repeatOnLifecycle(Lifecycle.State.RESUMED){
-                mainViewModel.productDataStateFlow.collect{
+                mainViewModel.getAllProducts(false)
+
+                mainViewModel.productDataStateFlow.collectLatest{
+
                 when (it) {
                     is DBState.Loading->{
+                        println("Loading")
                         binding.recyclerView.isVisible = false
                         binding.progressBar.isVisible = true
                     }
                     is DBState.Failure-> {
+                        println("Failure")
                         binding.recyclerView.isVisible = false
                         binding.progressBar.isVisible = false
                         Log.d("HEHE YOU GOT AN ERROR", "GET REKT IT'S DB CALL ${it.msg}")
 
                     }
 
-                    is DBState.Success-> {
+                    is DBState.SuccessProduct-> {
+                        println("Success")
                         binding.recyclerView.isVisible = true
                         binding.progressBar.isVisible=false
                         initRecyclerView(it.data)
 //                        productAdapter.setData(it.data)
                     }
 
-                    is DBState.Empty-> {
-
+                    else-> {
+                        println("Empty")
                     }
                 }
             }
@@ -156,9 +171,11 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initRecyclerView(productList: List<ProductEntity>) {
-        productAdapter=ProductAdapter(productList) { product ->
-            val intent = Intent(this, SingleView::class.java)
-            intent.putExtra("singleItemData", product)
+//        val localImageBoolean= getLocalImageBoolean()
+//        val localImageData= getLocalImageData()
+        productAdapter=ProductAdapter(productList) { productEntity ->
+            val intent = Intent(this, SingleViewActivity::class.java)
+            intent.putExtra("singleItemData", productEntity)
             startActivity(intent)
         }
         binding.recyclerView.apply {
@@ -167,4 +184,13 @@ class MainActivity : AppCompatActivity() {
             adapter=productAdapter
         }
     }
+
+//    private fun getLocalImageData(): Any {
+//        TODO("Not yet implemented") // Should come from DB
+//
+//    }
+//
+//    private fun getLocalImageBoolean(): Any {
+//        TODO("Not yet implemented") // Should come from Shared Preferences
+//    }
 }
