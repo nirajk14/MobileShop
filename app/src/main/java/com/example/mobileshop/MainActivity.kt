@@ -46,6 +46,8 @@ class MainActivity : AppCompatActivity() {
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initApplication()
+
 
         checkPermissionAvailability()
         requestPermission()
@@ -59,11 +61,31 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.mainAppBar.setOnMenuItemClickListener{
+            // just change it to switch and use sharedPref
             //todo loadfromLocalFile() should be configured in adapter probably
             true
 
         }
         mainViewModel.getAllProducts(refresh)
+
+    }
+
+    private fun initApplication() {
+        val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
+        val editor= sharedPreferences.edit()
+        var firstRun =sharedPreferences.getBoolean("FIRST_RUN", true)
+        var switchBool= sharedPreferences.getBoolean("SWITCH_STATE", false)
+
+        if(firstRun){
+            mainViewModel.getAllProducts(true)
+
+            editor.apply {
+                putBoolean("FIRST_RUN",false)
+            }
+
+        }
+
+
 
     }
 
