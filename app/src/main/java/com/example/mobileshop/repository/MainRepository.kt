@@ -66,4 +66,12 @@ private val localImageDao: LocalImageDao) {
         emit(localImageDao.findById(productId))
     }.flowOn(Dispatchers.IO)
 
+    fun getAllLocalImages(): Flow<List<LocalImageEntity>> = flow {
+        emit(localImageDao.getAllLocalImages())
+    }.flowOn(Dispatchers.IO)
+
+    fun getSingleLocalImage(productId: Int): Flow<LocalImageEntity> = flow {
+        emit(localImageDao.getSingleImage(productId)[0])
+    }.flowOn(Dispatchers.IO)
+
 }

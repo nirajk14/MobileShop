@@ -25,6 +25,12 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
     private val _localImageDataStateFlow: MutableStateFlow<DBState> = MutableStateFlow(DBState.Empty)
     val localImageDataStateFlow: StateFlow<DBState> = _localImageDataStateFlow
 
+    private val _allLocalImageDataStateFlow: MutableStateFlow<DBState> = MutableStateFlow(DBState.Empty)
+    val allLocalImageDataStateFlow: StateFlow<DBState> = _allLocalImageDataStateFlow
+
+    private val _singleLocalImageDataStateFlow: MutableStateFlow<DBState> = MutableStateFlow(DBState.Empty)
+    val singleLocalImageDataStateFlow: MutableStateFlow<DBState> = _singleLocalImageDataStateFlow
+
     fun getProducts() = viewModelScope.launch {
         _productStateFlow.value= ApiState.Loading
         mainRepository.getProducts()
@@ -70,6 +76,30 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
                 _localImageDataStateFlow.value=DBState.SuccessLocalImage(data)
             }
 
+    }
+
+    fun getAllLocalImages() = viewModelScope.launch {
+        _allLocalImageDataStateFlow.value=DBState.Loading
+        mainRepository.getAllLocalImages()
+            .catch {e->
+                _allLocalImageDataStateFlow.value=DBState.Failure(e)
+            }
+            .collect{
+                data ->
+                _allLocalImageDataStateFlow.value=DBState.SuccessLocalImage(data)
+            }
+    }
+
+    fun getSingleLocalImage(productId: Int) = viewModelScope.launch {
+        _singleLocalImageDataStateFlow.value= DBState.Loading
+        mainRepository.getSingleLocalImage(productId)
+            .catch {e->
+                _singleLocalImageDataStateFlow.value=DBState.Failure(e)
+            }
+            .collect{
+                data->
+                _singleLocalImageDataStateFlow.value=DBState.SuccessSingleLocalImage(data)
+            }
     }
 
 

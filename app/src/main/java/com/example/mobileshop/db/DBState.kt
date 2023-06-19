@@ -6,5 +6,7 @@ sealed class DBState {
     class SuccessProduct(val data: List<ProductEntity>) :DBState()
 
     class SuccessLocalImage(val data: List<LocalImageEntity>): DBState()
+
+    class SuccessSingleLocalImage(val data: LocalImageEntity): DBState()
     object Empty: DBState()
 }

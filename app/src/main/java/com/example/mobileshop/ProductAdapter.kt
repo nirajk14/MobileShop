@@ -11,8 +11,8 @@ import com.example.mobileshop.db.ProductEntity
 import com.squareup.picasso.Picasso
 
 class ProductAdapter(var mList: List<ProductEntity>,
-                     //var loadFromFile:Boolean
-                     // var localImageUrl: String
+                     var loadFromFile:Boolean,
+                     var localImageUrl: MutableMap<Int, String>,
                      private val onItemClick:(product: ProductEntity)->Unit):
     RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
     private lateinit var binding: ProductCardBinding
@@ -41,7 +41,16 @@ class ProductAdapter(var mList: List<ProductEntity>,
 
         //todo if statement determines what should be displayed here
         //if (something) then Picasso.get().load(localImages.imageUrl).into(holder.imageView) else do what is being done right now
-        Picasso.get().load(product.images[0]).into(holder.imageView)
+        if (loadFromFile and localImageUrl.containsKey(position)){
+            Picasso.get().load(localImageUrl[position]).into(holder.imageView)
+
+        }
+        else{
+            Picasso.get().load(product.images[0]).into(holder.imageView)
+
+        }
+
+
 
         //Conclusion Don't use bindings without putting on the class inside the class, this causes glitches in display if u use binding
 

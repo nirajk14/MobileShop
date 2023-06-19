@@ -6,7 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName="local_image")
 data class LocalImageEntity (
-    @PrimaryKey (autoGenerate = true) val id: Int?,
+    @PrimaryKey (autoGenerate = true)
+    val id: Int?,
     val imageUrl: String?,
     val productId: Int?
     )
