@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mobileshop.databinding.ActivityMainBinding
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
@@ -46,12 +47,14 @@ class MainActivity : AppCompatActivity() {
 
     private var recyclerViewData: List<ProductEntity> = listOf(emptyProductEntity)
     private var localImageMap: MutableMap<Int, String> = mutableMapOf()
+    private lateinit var builder: AlertDialog.Builder
 
     //    private var localImageData: ProductWithLocalImages? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        builder = AlertDialog.Builder(this)
 
 //        val animationDrawable = binding.constraintMain.background as AnimationDrawable
 //
@@ -75,6 +78,19 @@ class MainActivity : AppCompatActivity() {
             initRecyclerView(recyclerViewData, localImageMap)
             binding.swipeRefresh.isRefreshing = false
 
+        }
+
+        binding.mainAppBar.setOnMenuItemClickListener{menuItem->
+            when(menuItem.itemId){
+                R.id.infoButton-> {
+                    builder.setTitle("This app was created by")
+                        .setMessage("Niraj Kushwaha")
+                        .setPositiveButton("OK") {dialogInterface, it->
+                            dialogInterface.cancel()
+                        }.show()
+                    true}
+                else-> false
+            }
         }
 
 

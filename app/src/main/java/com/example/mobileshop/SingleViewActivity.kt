@@ -60,6 +60,10 @@ class SingleViewActivity : AppCompatActivity() {
             }
         }
 
+        binding.fab.setOnClickListener {
+            pickImageGallery(product.id)
+        }
+
         binding.swipeRefresh.setOnRefreshListener {
             binding.swipeRefresh.isRefreshing = false
             mainViewModel.getImageUrl(product.id)
@@ -71,9 +75,9 @@ class SingleViewActivity : AppCompatActivity() {
 
 
     private fun initRecyclerView(id: Int) {
+        mainViewModel.getImageUrl(id)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED){
-                mainViewModel.getImageUrl(id)
                 mainViewModel.localImageStateFlow.collectLatest {
                     when(it){
                         is DBState.Loading->{
@@ -122,14 +126,8 @@ class SingleViewActivity : AppCompatActivity() {
         if (requestCode == 100 && resultCode== RESULT_OK) {
             Picasso.get().load(data?.data).into(binding.imgView)
             var productEntity = intent.getSerializableExtra("singleItemData") as ProductEntity
-            mainViewModel.insertImageToRecyclerView(data?.data.toString(),productEntity.id)
-            mainViewModel.getImageUrl(productEntity.id)
-
-
-
-
-
-
+            val insertJob = mainViewModel.insertImageToRecyclerView(data?.data.toString(),productEntity.id)
+            insertJob.invokeOnCompletion { mainViewModel.getImageUrl(productEntity.id) }
         }
     }
 

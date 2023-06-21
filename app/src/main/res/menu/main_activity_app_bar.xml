@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/refreshButton"
+        android:id="@+id/infoButton"
         android:title="Change picture"
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="@android:drawable/ic_dialog_info"
         android:contentDescription="Refresh data"
         app:showAsAction="ifRoom"
         />
