@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:strokeColor="#20CF98"
-    app:strokeWidth="5dp"
-    android:layout_marginVertical="5dp"
+    app:strokeColor="#0E94EF"
+    app:strokeWidth="3dp"
+    android:layout_marginVertical="2dp"
     android:backgroundTint="@color/white"
     android:backgroundTintMode="multiply">
 
@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#B83AB8">
+        android:background="#CD0E94EF">
 
         <ImageView
             android:id="@+id/imageView"
@@ -34,7 +34,7 @@
             android:textSize="16sp"
             android:text="default"
             android:padding="5dp"
-            android:textColor="#E14A31"
+            android:textColor="@color/white"
              />
 
 
@@ -48,7 +48,7 @@
             android:textStyle="italic"
             android:text="defaultdescription"
             android:padding="5dp"
-            android:textColor="#1A30B8"
+            android:textColor="@color/white"
             />
 
 

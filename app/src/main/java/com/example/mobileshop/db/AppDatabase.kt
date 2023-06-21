@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import javax.inject.Singleton
 
-@Database(entities = [ProductEntity::class,LocalImageEntity::class], version = 5)
+@Database(entities = [ProductEntity::class,LocalImageEntity::class], version = 7)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao

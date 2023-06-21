@@ -4,21 +4,26 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 
 
 @Dao
 interface LocalImageDao {
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(localImageEntity: LocalImageEntity)
+    suspend fun insert(vararg localImageEntity: LocalImageEntity)
 
-    @Query("SELECT * FROM local_image WHERE productId LIKE :productId")
+    @Query("SELECT * FROM local_image WHERE productId = :productId")
     suspend fun findById(productId: Int): List<LocalImageEntity>
 
-    @Query("SELECT * FROM local_image WHERE productId = :productId AND id = 1") //This only makes sense if productId and id makes up a composite key
-    suspend fun getSingleImage(productId: Int): List<LocalImageEntity>
+    @Transaction
+    @Query("SELECT * FROM products")
+    suspend fun getProductsWithLocalImages(): List<ProductWithLocalImages>
 
-    @Query("SELECT * FROM local_image")
-    suspend fun getAllLocalImages(): List<LocalImageEntity>
+    @Query("SELECT MAX(id) FROM LOCAL_IMAGE WHERE productId = :productId")
+    suspend fun getMaxIdHavingProductId(productId: Int): Int
+
+    @Query("SELECT * FROM local_image WHERE productId = :productId ORDER BY productId ASC")
+    suspend fun getLocalImagesForProduct(productId: Int): List<LocalImageEntity>
 
 }

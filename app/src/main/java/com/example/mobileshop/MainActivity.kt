@@ -3,6 +3,7 @@ package com.example.mobileshop
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.drawable.AnimationDrawable
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,6 +22,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.mobileshop.db.DBState
 import com.example.mobileshop.db.LocalImageEntity
 import com.example.mobileshop.db.ProductEntity
+import com.example.mobileshop.db.ProductWithLocalImages
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -29,20 +31,38 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var productAdapter: ProductAdapter
-    var refresh= false
+    var refresh = false
 
 
     private val mainViewModel: MainViewModel by viewModels()
 
     private val permissionHelper: PermissionHelper = PermissionHelper(this)
+
+
+    val emptyProductEntity = ProductEntity()
+
+    private var recyclerViewData: List<ProductEntity> = listOf(emptyProductEntity)
+    private var localImageMap: MutableMap<Int, String> = mutableMapOf()
+
+    //    private var localImageData: ProductWithLocalImages? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding= ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+//        val animationDrawable = binding.constraintMain.background as AnimationDrawable
+//
+//        animationDrawable.apply {
+//            setEnterFadeDuration(2500)
+//            setExitFadeDuration(5000)
+//            start()
+//        }
+
         initApplication()
+        observeLocalData()
 
 
         permissionHelper.checkPermissionAvailability()
@@ -52,52 +72,71 @@ class MainActivity : AppCompatActivity() {
 
         binding.swipeRefresh.setOnRefreshListener {
             mainViewModel.getAllProducts(true)
+            initRecyclerView(recyclerViewData, localImageMap)
             binding.swipeRefresh.isRefreshing = false
 
         }
 
-        binding.mainAppBar.setOnMenuItemClickListener{
-            // just change it to switch and use sharedPref
-            //todo loadFromLocalFile() should be configured in adapter probably
-            //probably not needed
-            true
 
-        }
         mainViewModel.getAllProducts(refresh)
 
+
+    }
+
+    private fun observeLocalData() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                mainViewModel.localImageStateFlow.collectLatest {
+                    when (it) {
+                        is DBState.Loading -> {
+                            println("Loading local data")
+                        }
+
+                        is DBState.Failure -> {
+                            println("local data failed ${it.msg}")
+                        }
+
+                        is DBState.SuccessProductWithLocalImage -> {
+                            println("We got local image recycler view should reinit")
+                            if (it.data != null) {
+                                localImageMap[it.data.productEntity.id] =
+                                    it.data.localImageEntities[0].imageUrl.toString()
+                                initRecyclerView(recyclerViewData, localImageMap)
+                            }
+                        }
+
+                        else -> {
+                            println("local data Empty")
+                        }
+                    }
+                }
+            }
+
+        }
     }
 
     private fun initApplication() {
         val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
-        val editor= sharedPreferences.edit()
-        val firstRun =sharedPreferences.getBoolean("FIRST_RUN", true)
-        val switchBool= sharedPreferences.getBoolean("SWITCH_STATE", false)
-        val switch: SwitchCompat = binding.switch1
-        switch.isChecked=switchBool
-
-        switch.setOnCheckedChangeListener { _, b ->
-            //TODO setUp function to change view
-
-            editor.apply {
-                putBoolean("SWITCH_STATE",b)
-            }.apply()
-        }
+        val editor = sharedPreferences.edit()
+        val firstRun = sharedPreferences.getBoolean("FIRST_RUN", true)
+        val switchBool = sharedPreferences.getBoolean("SWITCH_STATE", false)
 
 
-        if(firstRun){
-            binding.mainAppBar.title="First run"
+
+
+        if (firstRun) {
+            binding.mainAppBar.title = "First run"
             println("First run")
             mainViewModel.getAllProducts(true)
 
             editor.apply {
-                putBoolean("FIRST_RUN",false)
+                putBoolean("FIRST_RUN", false)
+                putBoolean("SWITCH_STATE", false)
             }.apply()
 
+        } else {
+            binding.mainAppBar.title = "Not first run"
         }
-        else {
-            binding.mainAppBar.title="Not first run"
-        }
-
 
 
     }
@@ -112,75 +151,19 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
 
             //launch when X is deprecated hence use .launch{ and then put repeatOnLifecycle(STATE){ Put code here }}
-            repeatOnLifecycle(Lifecycle.State.RESUMED){
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 mainViewModel.getAllProducts(false)
 
-                mainViewModel.productDataStateFlow.collectLatest{
-
-                when (it) {
-                    is DBState.Loading->{
-                        println("Loading")
-                        binding.recyclerView.isVisible = false
-                        binding.progressBar.isVisible = true
-                    }
-                    is DBState.Failure-> {
-                        println("Failure")
-                        binding.recyclerView.isVisible = false
-                        binding.progressBar.isVisible = false
-                        Log.d("HEHE YOU GOT AN ERROR", "GET REKT IT'S DB CALL ${it.msg}")
-
-                    }
-
-                    is DBState.SuccessProduct-> {
-                        println("Success")
-                        binding.recyclerView.isVisible = true
-                        binding.progressBar.isVisible=false
-                        initRecyclerView(it.data) //This part is now the problem
-//                        productAdapter.setData(it.data)
-                    }
-
-                    else-> {
-                        println("Empty")
-                    }
-                }
-            }
-            }
-
-        }
-    }
-
-
-    private fun initRecyclerView(productList: List<ProductEntity>) {
-        val localImageBoolean= getLocalImageBoolean()
-        val localImageData= getLocalImageData() as MutableMap
-        productAdapter=ProductAdapter(productList, localImageBoolean, localImageData) { productEntity ->
-            val intent = Intent(this, SingleViewActivity::class.java)
-            intent.putExtra("singleItemData", productEntity)
-            startActivity(intent)
-        }
-        binding.recyclerView.apply {
-            setHasFixedSize(true)
-            layoutManager= LinearLayoutManager(this@MainActivity)
-            adapter=productAdapter
-        }
-    }
-
-    private fun getLocalImageData(): MutableMap<Int, String>? {
-
-        var mapData: MutableMap<Int,String>? = mutableMapOf<Int, String>()
-        lifecycleScope.launch {
-
-            repeatOnLifecycle(Lifecycle.State.RESUMED)  {
-
-                mainViewModel.allLocalImageDataStateFlow.collectLatest {
+                mainViewModel.productDataStateFlow.collectLatest {
 
                     when (it) {
-                        is DBState.Loading->{
+                        is DBState.Loading -> {
                             println("Loading")
                             binding.recyclerView.isVisible = false
                             binding.progressBar.isVisible = true
                         }
-                        is DBState.Failure-> {
+
+                        is DBState.Failure -> {
                             println("Failure")
                             binding.recyclerView.isVisible = false
                             binding.progressBar.isVisible = false
@@ -188,45 +171,45 @@ class MainActivity : AppCompatActivity() {
 
                         }
 
-                        is DBState.SuccessLocalImage-> {
+                        is DBState.SuccessProduct -> {
                             println("Success")
                             binding.recyclerView.isVisible = true
-                            binding.progressBar.isVisible=false
-                            mapData =createMapFromDbData(it.data)
+                            binding.progressBar.isVisible = false
+
+                            recyclerViewData = it.data
+                            initRecyclerView(
+                                recyclerViewData,
+                                localImageMap
+                            ) //This part is now the problem
 //                        productAdapter.setData(it.data)
                         }
 
-                        else-> {
+                        else -> {
                             println("Empty")
                         }
                     }
-
                 }
-
-            }  // Should come from DB
-
-        }
-        return mapData
-
-    }
-
-    private fun createMapFromDbData(data: List<LocalImageEntity>): MutableMap<Int, String> {
-        val urlMap = mutableMapOf<Int, String>()
-        //TODO Code to create Map the int contains productId and String contains imageUrl which are both attributes of LocalImageEntity
-
-        for (entity in data) {
-            val productId = entity.productId as Int
-            val imageUrl = entity.imageUrl as String
-            if (!urlMap.containsKey(productId)) {
-                urlMap[productId] = imageUrl
             }
+
         }
-
-        return urlMap
-
     }
 
-    private fun getLocalImageBoolean(): Boolean {
-        return getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE).getBoolean("SWITCH_STATE",binding.switch1.isChecked)// Should come from Shared Preferences
+
+    private fun initRecyclerView(
+        productList: List<ProductEntity>,
+        localImageMap: MutableMap<Int, String>
+    ) {
+        productAdapter = ProductAdapter(productList, localImageMap) { productEntity ->
+            val intent = Intent(this, SingleViewActivity::class.java)
+            intent.putExtra("singleItemData", productEntity)
+            startActivity(intent)
+        }
+        binding.recyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = productAdapter
+        }
     }
+
+
 }

@@ -7,6 +7,7 @@ import com.example.mobileshop.db.LocalImageDao
 import com.example.mobileshop.db.LocalImageEntity
 import com.example.mobileshop.db.ProductDao
 import com.example.mobileshop.db.ProductEntity
+import com.example.mobileshop.db.ProductWithLocalImages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -17,16 +18,14 @@ class MainRepository @Inject constructor(private val apiServiceImpl: ApiServiceI
 private val productDao: ProductDao,
 private val localImageDao: LocalImageDao) {
 
-    fun getProducts(): Flow<ApiResponse> = flow {
-        emit(apiServiceImpl.getProducts())
-    }.flowOn(Dispatchers.IO)
 
 
-    suspend fun insertProduct(productEntity: ProductEntity) {
+
+    private suspend fun insertProduct(productEntity: ProductEntity) {
         productDao.insert(productEntity)
     }
 
-    suspend fun insertProduct(product: Product, localImageBoolean: Boolean) {
+    private suspend fun insertProduct(product: Product) {
         val productEntity = ProductEntity(
             id = product.id!!,
             title = product.title,
@@ -39,14 +38,13 @@ private val localImageDao: LocalImageDao) {
             category = product.category,
             thumbnail = product.thumbnail,
             images = product.images,
-            localImages = localImageBoolean,
         )
         productDao.insert(productEntity)
     }
 
-    suspend fun insertApiDataToDB(apiResponse: ApiResponse) {
+    private suspend fun insertApiDataToDB(apiResponse: ApiResponse) {
         apiResponse.products.map { product ->
-            insertProduct(product, false)
+            insertProduct(product)
         }
     }
 
@@ -56,22 +54,35 @@ private val localImageDao: LocalImageDao) {
         emit(productDao.getAllProducts())
     }.flowOn(Dispatchers.IO)
 
-    suspend fun insertLocalImage(localImageEntity: LocalImageEntity, productEntity: ProductEntity) {
-        val productEntityCopy= productEntity.copy(localImages = true)
-        insertProduct(productEntityCopy)
+    suspend fun insertLocalImage(localImageEntity: LocalImageEntity) {
         localImageDao.insert(localImageEntity)
     }
 
-    fun getCorrectLocalImages(productId: Int): Flow<List<LocalImageEntity>> = flow{
-        emit(localImageDao.findById(productId))
+    suspend fun insertImageToRecyclerView(url: String, productId: Int) {
+        var id= 0
+        if (localImageDao.getMaxIdHavingProductId(productId)!= null){
+            id = localImageDao.getMaxIdHavingProductId(productId) + 1}
+        else
+            {id=0}
+        val localImageEntity= LocalImageEntity(
+            id = id,
+            imageUrl = url,
+            productId = productId
+        )
+        localImageDao.insert(localImageEntity)
+
+    }
+
+    suspend fun getProductWithLocalImages(productId: Int): Flow<ProductWithLocalImages?> = flow {
+        val product = productDao.getProductById(productId)
+        val localImages = localImageDao.getLocalImagesForProduct(productId)
+
+        if (product != null && localImages.isNotEmpty()) {
+            emit(ProductWithLocalImages(product, localImages))
+        } else {
+            emit(null)
+        }
     }.flowOn(Dispatchers.IO)
 
-    fun getAllLocalImages(): Flow<List<LocalImageEntity>> = flow {
-        emit(localImageDao.getAllLocalImages())
-    }.flowOn(Dispatchers.IO)
-
-    fun getSingleLocalImage(productId: Int): Flow<LocalImageEntity> = flow {
-        emit(localImageDao.getSingleImage(productId)[0])
-    }.flowOn(Dispatchers.IO)
 
 }
