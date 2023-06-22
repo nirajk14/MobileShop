@@ -5,15 +5,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mobileshop.databinding.LocalImageCardBinding
 import com.example.mobileshop.databinding.ProductCardBinding
-import com.example.mobileshop.db.ProductEntity
+import com.example.mobileshop.db.LocalImageEntity
 import com.example.mobileshop.db.ProductWithLocalImages
 import com.squareup.picasso.Picasso
 
-class LocalImageAdapter(val productWithLocalImages: ProductWithLocalImages):
+class LocalImageAdapter():
     RecyclerView.Adapter<LocalImageAdapter.LocalImageViewHolder>() {
+
+    private var listLocalImages = emptyList<LocalImageEntity>()
 
     class LocalImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val imageViewLocal: ImageView = itemView.findViewById(R.id.imageViewLocal)
@@ -24,11 +27,20 @@ class LocalImageAdapter(val productWithLocalImages: ProductWithLocalImages):
             return LocalImageViewHolder(itemView)
     }
 
-    override fun getItemCount(): Int = productWithLocalImages.localImageEntities.size
+    override fun getItemCount(): Int = listLocalImages.size
 
     override fun onBindViewHolder(holder: LocalImageViewHolder, position: Int) {
-        val currentItem = productWithLocalImages.localImageEntities[position].imageUrl
-        Picasso.get().load(currentItem).into(holder.imageViewLocal)
+
+        val currentItem = listLocalImages[position].imageUrl
+        println("I think you should see recycler view coz look $currentItem")
+        Picasso.get().load(currentItem).resize(600,600).centerCrop().into(holder.imageViewLocal)
+    }
+
+    fun setData(newLocalImageList: List<LocalImageEntity>){
+        val diffUtil = MyDiffUtil(listLocalImages, newLocalImageList)
+        val diffResults = DiffUtil.calculateDiff(diffUtil)
+        listLocalImages = newLocalImageList
+        diffResults.dispatchUpdatesTo(this)
     }
 
 

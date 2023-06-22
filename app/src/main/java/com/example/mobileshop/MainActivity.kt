@@ -20,9 +20,9 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.mobileshop.api_recycler_view.Product
 import com.example.mobileshop.db.DBState
 import com.example.mobileshop.db.LocalImageEntity
-import com.example.mobileshop.db.ProductEntity
 import com.example.mobileshop.db.ProductWithLocalImages
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -43,10 +43,9 @@ class MainActivity : AppCompatActivity() {
     private val permissionHelper: PermissionHelper = PermissionHelper(this)
 
 
-    val emptyProductEntity = ProductEntity()
+    val emptyProduct = Product()
 
-    private var recyclerViewData: List<ProductEntity> = listOf(emptyProductEntity)
-    private var localImageMap: MutableMap<Int, String> = mutableMapOf()
+    private var recyclerViewData: List<Product> = listOf(emptyProduct)
     private lateinit var builder: AlertDialog.Builder
 
     //    private var localImageData: ProductWithLocalImages? = null
@@ -56,16 +55,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         builder = AlertDialog.Builder(this)
 
-//        val animationDrawable = binding.constraintMain.background as AnimationDrawable
-//
-//        animationDrawable.apply {
-//            setEnterFadeDuration(2500)
-//            setExitFadeDuration(5000)
-//            start()
-//        }
-
         initApplication()
-        observeLocalData()
 
 
         permissionHelper.checkPermissionAvailability()
@@ -75,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.swipeRefresh.setOnRefreshListener {
             mainViewModel.getAllProducts(true)
-            initRecyclerView(recyclerViewData, localImageMap)
+            initRecyclerView(recyclerViewData)
             binding.swipeRefresh.isRefreshing = false
 
         }
@@ -99,37 +89,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun observeLocalData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                mainViewModel.localImageStateFlow.collectLatest {
-                    when (it) {
-                        is DBState.Loading -> {
-                            println("Loading local data")
-                        }
 
-                        is DBState.Failure -> {
-                            println("local data failed ${it.msg}")
-                        }
-
-                        is DBState.SuccessProductWithLocalImage -> {
-                            println("We got local image recycler view should reinit")
-                            if (it.data != null) {
-                                localImageMap[it.data.productEntity.id] =
-                                    it.data.localImageEntities[0].imageUrl.toString()
-                                initRecyclerView(recyclerViewData, localImageMap)
-                            }
-                        }
-
-                        else -> {
-                            println("local data Empty")
-                        }
-                    }
-                }
-            }
-
-        }
-    }
 
     private fun initApplication() {
         val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
@@ -195,9 +155,7 @@ class MainActivity : AppCompatActivity() {
                             recyclerViewData = it.data
                             initRecyclerView(
                                 recyclerViewData,
-                                localImageMap
-                            ) //This part is now the problem
-//                        productAdapter.setData(it.data)
+                            )
                         }
 
                         else -> {
@@ -212,12 +170,11 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initRecyclerView(
-        productList: List<ProductEntity>,
-        localImageMap: MutableMap<Int, String>
+        productList: List<Product>
     ) {
-        productAdapter = ProductAdapter(productList, localImageMap) { productEntity ->
+        productAdapter = ProductAdapter(productList) { product ->
             val intent = Intent(this, SingleViewActivity::class.java)
-            intent.putExtra("singleItemData", productEntity)
+            intent.putExtra("singleItemData", product)
             startActivity(intent)
         }
         binding.recyclerView.apply {

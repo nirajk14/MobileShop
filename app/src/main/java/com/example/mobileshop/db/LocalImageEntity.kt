@@ -4,11 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.mobileshop.api_recycler_view.Product
 
 
 @Entity(tableName="local_image", primaryKeys = ["productId", "id"], foreignKeys = [
     ForeignKey(
-        entity = ProductEntity::class,
+        entity = Product::class,
         parentColumns = ["id"],
         childColumns = ["productId"],
         onDelete = ForeignKey.CASCADE

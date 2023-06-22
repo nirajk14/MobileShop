@@ -5,10 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.mobileshop.api_recycler_view.ApiState
 import com.example.mobileshop.db.DBState
 import com.example.mobileshop.db.LocalImageEntity
-import com.example.mobileshop.db.ProductEntity
 import com.example.mobileshop.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -21,8 +22,8 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 
     private val _productDataStateFlow: MutableStateFlow<DBState> = MutableStateFlow(DBState.Empty)
     val productDataStateFlow: StateFlow<DBState> = _productDataStateFlow
-    private val _localImageStateFlow: MutableStateFlow<DBState> = MutableStateFlow(DBState.Empty)
-    val localImageStateFlow: StateFlow<DBState> = _localImageStateFlow
+    private val _localImageSharedFlow: MutableSharedFlow<DBState> = MutableSharedFlow(replay = 5)
+    val localImageSharedFlow: SharedFlow<DBState> = _localImageSharedFlow
 
 
 
@@ -56,15 +57,16 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
     }
 
     fun getImageUrl(productId: Int) = viewModelScope.launch {
-        _localImageStateFlow.value= DBState.Loading
-        mainRepository.getProductWithLocalImages(productId)
+        _localImageSharedFlow.emit(DBState.Loading)
+        mainRepository.getLocalImagesForProduct(productId)
                 .catch { e ->
-                    _localImageStateFlow.value=DBState.Failure(e)
+                    _localImageSharedFlow.emit(DBState.Failure(e))
                 }
                 .collect {
                     data->
-                    _localImageStateFlow.value=DBState.SuccessProductWithLocalImage(data)
+                    _localImageSharedFlow.emit(DBState.SuccessProductWithLocalImage(data))
                 }
+
 
         }
 
