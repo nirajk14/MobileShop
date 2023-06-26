@@ -12,36 +12,22 @@
         android:id="@+id/constraintMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/gradient_two"
+        android:background="#f8f8f8"
         tools:context=".MainActivity">
+        <include
+            android:id="@+id/includedMain"
+            layout="@layout/toolbar"/>
 
-
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/mainAppBar"
-                style="@style/Widget.MaterialComponents.Toolbar.Primary"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:menu="@menu/main_activity_app_bar"
-                app:title="M" />
-        </com.google.android.material.appbar.AppBarLayout>
 
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/appBar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/includedMain"
             tools:visibility="visible" />
 
 

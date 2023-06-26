@@ -7,11 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mobileshop.databinding.ProductCardBinding
-import com.example.mobileshop.db.LocalImageEntity
 import com.squareup.picasso.Picasso
-import androidx.activity.viewModels
 import com.example.mobileshop.api_recycler_view.Product
-import com.example.mobileshop.db.ProductWithLocalImages
 
 class ProductAdapter(var mList: List<Product>,
                      private val onItemClick:(product: Product)->Unit):
@@ -22,8 +19,11 @@ class ProductAdapter(var mList: List<Product>,
 
     class ProductViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView){
         val textView: TextView=itemView.findViewById(R.id.textView)
-        val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
+        val tvPrice: TextView = itemView.findViewById(R.id.tvPrice)
+        val tvRating: TextView = itemView.findViewById(R.id.tvRating)
+        val tvStock: TextView = itemView.findViewById(R.id.tvStock)
         val imageView: ImageView = itemView.findViewById(R.id.imageView)
+        val tvBrand: TextView = itemView.findViewById(R.id.tvBrand)
 
     }
 
@@ -40,10 +40,16 @@ class ProductAdapter(var mList: List<Product>,
 //        binding.tvDescription.text=product.description
 //        Picasso.get().load(product.images[0]).into(binding.imageView)
         holder.textView.setText(product.title)
-        holder.tvDescription.setText(product.description)
+        holder.tvBrand.setText(product.brand)
+        holder.tvPrice.setText("$" + product.price.toString())
+        if (product.stock!! <= 0)
+            holder.tvStock.setText("Out of Stock")
+        else
+            holder.tvStock.setText("In Stock: ${product.stock}")
+        holder.tvRating.setText("\u2B50" +" " + product.rating.toString() +"/5")
 
 
-        Picasso.get().load(product.images[0]).into(holder.imageView)
+        Picasso.get().load(product.images[0]).resize(1000,600).centerCrop().into(holder.imageView)
 
 
         holder.itemView.setOnClickListener {

@@ -10,27 +10,19 @@
     android:background="@drawable/gradient_two"
     tools:context=".SingleViewActivity">
 
+    <include
+        android:id="@+id/includedSingle"
+        layout="@layout/toolbar"/>
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topAppBar"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:menu="@menu/main_activity_app_bar" />
-    </com.google.android.material.appbar.AppBarLayout>
+
 
 
     <ImageView
         android:id="@+id/imgView"
         android:layout_width="match_parent"
         android:layout_height="400dp"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/includedSingle" />
 
 
     <TextView

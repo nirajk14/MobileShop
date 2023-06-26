@@ -4,9 +4,9 @@
 
     <item
         android:id="@+id/infoButton"
-        android:title="Change picture"
+        android:title="Info"
         android:icon="@android:drawable/ic_dialog_info"
-        android:contentDescription="Refresh data"
+        android:contentDescription="Information"
         app:showAsAction="ifRoom"
         />
 
