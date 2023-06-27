@@ -50,7 +50,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     val emptyProduct = Product()
 
-    private var recyclerViewData: PagingData<Product> = PagingData.empty()
+    private lateinit var recyclerViewData: List<Product>
     private lateinit var builder: AlertDialog.Builder
 
     //    private var localImageData: ProductWithLocalImages? = null

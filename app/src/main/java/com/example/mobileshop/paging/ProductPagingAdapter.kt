@@ -34,7 +34,7 @@ class ProductPagingAdapter: PagingDataAdapter<Product, ProductPagingAdapter.Prod
 
 
         val textView: TextView = itemView.findViewById(R.id.textView)
-        val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
+        val tvDescription: TextView = itemView.findViewById(R.id.tvBrand)
         val imageView: ImageView = itemView.findViewById(R.id.imageView)
 
         fun bind(product: Product) {

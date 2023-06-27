@@ -9,6 +9,7 @@ import com.example.mobileshop.db.LocalImageDao
 import com.example.mobileshop.db.LocalImageEntity
 import com.example.mobileshop.db.ProductDao
 import com.example.mobileshop.db.ProductWithLocalImages
+import com.example.mobileshop.paging.ProductPagingSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

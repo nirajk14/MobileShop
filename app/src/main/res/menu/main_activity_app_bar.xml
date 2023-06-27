@@ -7,7 +7,6 @@
         android:title="Info"
         android:icon="@android:drawable/ic_dialog_info"
         android:contentDescription="Information"
-        app:showAsAction="ifRoom"
         />
 
 
