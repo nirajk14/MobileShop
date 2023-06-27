@@ -8,6 +8,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
@@ -25,18 +27,19 @@ import com.example.mobileshop.api_recycler_view.Product
 import com.example.mobileshop.db.DBState
 import com.example.mobileshop.db.LocalImageEntity
 import com.example.mobileshop.db.ProductWithLocalImages
-import com.example.mobileshop.paging.ProductPagingAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity<ActivityMainBinding>() {
 
 
-    private lateinit var binding: ActivityMainBinding
-    private lateinit var productAdapter: ProductPagingAdapter
+    private val binding: ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+    private lateinit var productAdapter: ProductAdapter
     var refresh = false
 
 
@@ -53,9 +56,8 @@ class MainActivity : AppCompatActivity() {
     //    private var localImageData: ProductWithLocalImages? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         builder = AlertDialog.Builder(this)
+//        setContentView(binding.root)
 
         initApplication()
 
@@ -72,18 +74,13 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        binding.mainAppBar.setOnMenuItemClickListener{menuItem->
-            when(menuItem.itemId){
-                R.id.infoButton-> {
-                    builder.setTitle("This app was created by")
-                        .setMessage("Niraj Kushwaha")
-                        .setPositiveButton("OK") {dialogInterface, it->
-                            dialogInterface.cancel()
-                        }.show()
-                    true}
-                else-> false
+        binding.includedMain.mainAppBar.setOnMenuItemClickListener{ menuItem ->
+            when (menuItem.itemId) {
+                R.id.infoButton -> showInfoDialog(builder)
+                else -> false
             }
         }
+
 
 
         mainViewModel.getAllProducts(refresh)
@@ -91,6 +88,20 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun initViews() {
+        with(binding) {
+
+        }
+    }
+
+    private fun initObservers() {
+
+    }
+
+    override fun createBinding(): ActivityMainBinding {
+//        return ActivityMainBinding.inflate(layoutInflater)
+        return binding
+    }
 
 
     private fun initApplication() {
@@ -103,8 +114,7 @@ class MainActivity : AppCompatActivity() {
 
 
         if (firstRun) {
-            binding.mainAppBar.title = "First run"
-            println("First run")
+
             mainViewModel.getAllProducts(true)
 
             editor.apply {
@@ -112,8 +122,6 @@ class MainActivity : AppCompatActivity() {
                 putBoolean("SWITCH_STATE", false)
             }.apply()
 
-        } else {
-            binding.mainAppBar.title = "Not first run"
         }
 
 
@@ -172,15 +180,17 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initRecyclerView(
-        productData: PagingData<Product>
+        productList: List<Product>
     ) {
-        productAdapter = ProductPagingAdapter()
+        productAdapter = ProductAdapter(productList) { product ->
+            val intent = Intent(this, SingleViewActivity::class.java)
+            intent.putExtra("singleItemData", product)
+            startActivity(intent)
+        }
         binding.recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = productAdapter
-            productAdapter.submitData(lifecycle, productData)
-
         }
     }
 

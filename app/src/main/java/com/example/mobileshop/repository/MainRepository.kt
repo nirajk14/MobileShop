@@ -9,7 +9,6 @@ import com.example.mobileshop.db.LocalImageDao
 import com.example.mobileshop.db.LocalImageEntity
 import com.example.mobileshop.db.ProductDao
 import com.example.mobileshop.db.ProductWithLocalImages
-import com.example.mobileshop.paging.ProductPagingSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -21,7 +20,6 @@ class MainRepository @Inject constructor(
     private val productDao: ProductDao,
     private val localImageDao: LocalImageDao
 ) {
-
 
 
     private suspend fun insertProduct(product: Product) {
@@ -62,11 +60,11 @@ class MainRepository @Inject constructor(
     }
 
     suspend fun insertImageToRecyclerView(url: String, productId: Int) {
-        var id = 0
-        if (localImageDao.getMaxIdHavingProductId(productId) != null) {
-            id = localImageDao.getMaxIdHavingProductId(productId) + 1
+
+        val id = if (localImageDao.getMaxIdHavingProductId(productId) != null) {
+            localImageDao.getMaxIdHavingProductId(productId) + 1
         } else {
-            id = 0
+            0
         }
         val localImageEntity = LocalImageEntity(
             id = id,

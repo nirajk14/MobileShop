@@ -20,18 +20,18 @@ import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class SingleViewActivity : AppCompatActivity() {
+class SingleViewActivity : BaseActivity<ActivitySingleViewBinding>() {
     private lateinit var binding: ActivitySingleViewBinding
     private val mainViewModel: MainViewModel by viewModels()
-    private lateinit var builder: AlertDialog.Builder
 
-    private val localImageAdapter by lazy {LocalImageAdapter()}
+
+    private val localImageAdapter by lazy { LocalImageAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding=ActivitySingleViewBinding.inflate(layoutInflater)
+        binding=createBinding()
         setContentView(binding.root)
+
 
 
 //        val animationDrawable = binding.constraintSingle.background as AnimationDrawable
@@ -42,37 +42,36 @@ class SingleViewActivity : AppCompatActivity() {
 //            start()
 //        }
 
-        val product= intent.getSerializableExtra("singleItemData") as Product
-        if (product!=null){
-            binding.txtView.text=product.title.toString()
-            binding.txtView1.text=product.brand.toString()
-            binding.txtView2.text=product.category.toString()
-            binding.txtView3.text=product.description.toString()
+        val product = intent.getSerializableExtra("singleItemData") as Product
+        if (product != null) {
+            binding.txtView.text = product.title.toString()
+            binding.txtView1.text = product.brand.toString()
+            binding.txtView2.text = product.category.toString()
+            binding.txtView3.text = product.description.toString()
             Picasso.get().load(product.images[0]).into(binding.imgView)
             initRecyclerView(product.id)
 
         }
-        builder = AlertDialog.Builder(this)
-        binding.topAppBar.setOnMenuItemClickListener{menuItem->
-            when(menuItem.itemId){
-                R.id.infoButton-> {
-                    builder.setTitle("This app was created by")
-                        .setMessage("Niraj Kushwaha")
-                        .setPositiveButton("OK") {dialogInterface, it->
-                            dialogInterface.cancel()
-                        }.show()
-                    true}
-                else-> false
-            }
-        }
+
 
         binding.fab.setOnClickListener {
             pickImageGallery(product.id)
+        }
+        val builder = AlertDialog.Builder(this)
+
+        binding.includedSingle.mainAppBar.setOnMenuItemClickListener{ menuItem ->
+            when (menuItem.itemId) {
+                R.id.infoButton -> showInfoDialog(builder)
+                else -> false
+            }
         }
 
 
     }
 
+    override fun createBinding(): ActivitySingleViewBinding {
+        return ActivitySingleViewBinding.inflate(layoutInflater)
+    }
 
 
     private fun initRecyclerView(id: Int) {
@@ -80,23 +79,27 @@ class SingleViewActivity : AppCompatActivity() {
 
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED){
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
 
                 mainViewModel.localImageSharedFlow.collectLatest {
-                    when(it){
-                        is DBState.Loading->{
+                    when (it) {
+                        is DBState.Loading -> {
                             println("Loading $id data")
                         }
-                        is DBState.Failure->{
+
+                        is DBState.Failure -> {
                             println("Failed the message is ${it.msg}")
                         }
-                        is DBState.SuccessProductWithLocalImage->{
 
-                            if (it.data!=null){
+                        is DBState.SuccessProductWithLocalImage -> {
+
+                            if (it.data != null) {
                                 println("I think you should see recycler view")
-                                adaptToRecyclerView(it.data)}
+                                adaptToRecyclerView(it.data)
+                            }
                         }
-                        else ->{
+
+                        else -> {
                             println("Local Image Data is empty no recycler view will be displayed")
                         }
                     }
@@ -108,14 +111,17 @@ class SingleViewActivity : AppCompatActivity() {
 
     private fun adaptToRecyclerView(data: List<LocalImageEntity>) {
 
-        if (data.isNotEmpty()){
+        if (data.isNotEmpty()) {
 
 
-            binding.recyclerView.also {recyclerView->
-                recyclerView.setHasFixedSize(true)
-                recyclerView.layoutManager = LinearLayoutManager(this@SingleViewActivity, LinearLayoutManager.HORIZONTAL,false)
-                recyclerView.adapter=localImageAdapter
-                localImageAdapter.setData(data)
+            binding.recyclerView.apply {
+                setHasFixedSize(true)
+                layoutManager = LinearLayoutManager(
+                    this@SingleViewActivity,
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+                )
+                adapter = localImageAdapter.apply { setData(data) }
 
             }
 
@@ -123,18 +129,19 @@ class SingleViewActivity : AppCompatActivity() {
     }
 
     private fun pickImageGallery(productId: Int) {
-        val intent= Intent(Intent.ACTION_PICK)
-        intent.type="image/*"  //  */* means all  application/pdf allows only pdf file to be selected
-        startActivityForResult(intent,100)
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type =
+            "image/*"  //  */* means all  application/pdf allows only pdf file to be selected
+        startActivityForResult(intent, 100)
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 100 && resultCode== RESULT_OK) {
+        if (requestCode == 100 && resultCode == RESULT_OK) {
             Picasso.get().load(data?.data).into(binding.imgView)
             var product = intent.getSerializableExtra("singleItemData") as Product
-            mainViewModel.insertImageToRecyclerView(data?.data.toString(),product.id)
+            mainViewModel.insertImageToRecyclerView(data?.data.toString(), product.id)
         }
     }
 
