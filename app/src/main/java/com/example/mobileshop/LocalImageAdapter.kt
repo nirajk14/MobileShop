@@ -17,8 +17,13 @@ import com.squareup.picasso.Picasso
 
 class LocalImageAdapter():
     RecyclerView.Adapter<LocalImageAdapter.LocalImageViewHolder>() {
+    private var emptyLocalImageEntity = LocalImageEntity(
+        id=-1,
+        imageUrl = "",
+        productId = -1
+    )
 
-    private var listLocalImages = emptyList<LocalImageEntity>()
+    private var listLocalImages = listOf<LocalImageEntity>(emptyLocalImageEntity, emptyLocalImageEntity, emptyLocalImageEntity)
 
     class LocalImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val imageViewLocal: ImageView = itemView.findViewById(R.id.imageViewLocal)
@@ -33,10 +38,17 @@ class LocalImageAdapter():
 
     override fun onBindViewHolder(holder: LocalImageViewHolder, position: Int) {
 
-        Picasso.get().load("https://www.bollywoodhungama.com/wp-content/uploads/2019/06/Anil-Kapoor-cant-stop-laughing-after-Majnu-Bhais-painting-from-Welcome-travels-to-Buckingham-Palace.jpg").resize(600,600).centerCrop().into(holder.imageViewLocal)
+//        Picasso.get().load("https://www.bollywoodhungama.com/wp-content/uploads/2019/06/Anil-Kapoor-cant-stop-laughing-after-Majnu-Bhais-painting-from-Welcome-travels-to-Buckingham-Palace.jpg").resize(600,600).centerCrop().into(holder.imageViewLocal)
         val currentItem = listLocalImages[position].imageUrl
         println("I think you should see recycler view coz look $currentItem")
-        Picasso.get().load(currentItem).resize(600,600).centerCrop().into(holder.imageViewLocal)
+        if (currentItem != null) {
+            if (currentItem.isEmpty())
+                Picasso.get().load("file:///android_res/drawable/blank_image.png").resize(600,600).centerCrop().into(holder.imageViewLocal)
+            else
+                Picasso.get().load(currentItem).resize(600,600).centerCrop().into(holder.imageViewLocal)
+
+        }
+
     }
 
     fun setData(newLocalImageList: List<LocalImageEntity>){

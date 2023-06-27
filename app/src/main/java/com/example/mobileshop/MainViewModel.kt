@@ -20,9 +20,9 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val mainRepository: MainRepository) : ViewModel() {
 
 
-    private val _productDataStateFlow: MutableStateFlow<DBState> = MutableStateFlow(DBState.Empty)
-    val productDataStateFlow: StateFlow<DBState> = _productDataStateFlow
-    private val _localImageSharedFlow: MutableSharedFlow<DBState> = MutableSharedFlow(replay = 5)
+    private val _productDataStateFlow: MutableSharedFlow<DBState> = MutableSharedFlow(0)
+    val productDataStateFlow: SharedFlow<DBState> = _productDataStateFlow
+    private val _localImageSharedFlow: MutableSharedFlow<DBState> = MutableSharedFlow(2)
     val localImageSharedFlow: SharedFlow<DBState> = _localImageSharedFlow
 
 
@@ -31,14 +31,14 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 
     fun getAllProducts(refresh: Boolean) = viewModelScope.launch {
         println("getAllProducts")
-        _productDataStateFlow.value= DBState.Loading
-        mainRepository.getAllProducts(refresh)
+        _productDataStateFlow.emit( DBState.Loading)
+        mainRepository.getProducts()
             .catch { e->
-                _productDataStateFlow.value= DBState.Failure(e)
+                _productDataStateFlow.emit(DBState.Failure(e))
             }
             .collect {
                     data ->
-                _productDataStateFlow.value = DBState.SuccessProduct(data)
+                _productDataStateFlow.emit(DBState.SuccessProduct(data))
             }
     }
 

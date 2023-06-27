@@ -50,9 +50,9 @@ class MainRepository @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     fun getProducts()= Pager(
-        config = PagingConfig(pageSize = 10, maxSize = 30),
+        config = PagingConfig(0, maxSize = 30),
         pagingSourceFactory ={
-            ProductPagingSource(productDao)
+            ProductPagingSource(productDao,apiServiceImpl)
         }
     ).flow
 

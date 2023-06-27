@@ -27,6 +27,7 @@ import com.example.mobileshop.api_recycler_view.Product
 import com.example.mobileshop.db.DBState
 import com.example.mobileshop.db.LocalImageEntity
 import com.example.mobileshop.db.ProductWithLocalImages
+import com.example.mobileshop.paging.ProductPagingAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-    private lateinit var productAdapter: ProductAdapter
+    private val productAdapter = ProductPagingAdapter()
     var refresh = false
 
 
@@ -50,7 +51,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     val emptyProduct = Product()
 
-    private lateinit var recyclerViewData: List<Product>
     private lateinit var builder: AlertDialog.Builder
 
     //    private var localImageData: ProductWithLocalImages? = null
@@ -64,14 +64,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         permissionHelper.checkPermissionAvailability()
         permissionHelper.requestPermission()
+//        mainViewModel.getAllProducts(refresh)
 
-        observeProductData(binding)
+        observeProductData()
 
         binding.swipeRefresh.setOnRefreshListener {
-            mainViewModel.getAllProducts(true)
-            initRecyclerView(recyclerViewData)
             binding.swipeRefresh.isRefreshing = false
-
         }
 
         binding.includedMain.mainAppBar.setOnMenuItemClickListener{ menuItem ->
@@ -83,7 +81,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
 
 
-        mainViewModel.getAllProducts(refresh)
+
 
 
     }
@@ -115,7 +113,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         if (firstRun) {
 
-            mainViewModel.getAllProducts(true)
+//            mainViewModel.getAllProducts(true)
 
             editor.apply {
                 putBoolean("FIRST_RUN", false)
@@ -127,20 +125,20 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        mainViewModel.getAllProducts(false)
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        mainViewModel.getAllProducts(false)
+//    }
 
-    private fun observeProductData(binding: ActivityMainBinding) {
+    private fun observeProductData() {
 
         lifecycleScope.launch {
 
             //launch when X is deprecated hence use .launch{ and then put repeatOnLifecycle(STATE){ Put code here }}
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.getAllProducts(false)
 
-                mainViewModel.productDataStateFlow.collectLatest {
+                mainViewModel.productDataStateFlow.collect {
 
                     when (it) {
                         is DBState.Loading -> {
@@ -161,11 +159,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             println("Success")
                             binding.recyclerView.isVisible = true
                             binding.progressBar.isVisible = false
-
-                            recyclerViewData = it.data
-                            initRecyclerView(
-                                recyclerViewData,
-                            )
+                            productAdapter.submitData(lifecycle,it.data)
+                            binding.recyclerView.apply {
+//            setHasFixedSize(true)
+                                layoutManager = LinearLayoutManager(this@MainActivity)
+                                adapter = productAdapter
+                            }
                         }
 
                         else -> {
@@ -175,22 +174,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 }
             }
 
-        }
-    }
-
-
-    private fun initRecyclerView(
-        productList: List<Product>
-    ) {
-        productAdapter = ProductAdapter(productList) { product ->
-            val intent = Intent(this, SingleViewActivity::class.java)
-            intent.putExtra("singleItemData", product)
-            startActivity(intent)
-        }
-        binding.recyclerView.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = productAdapter
         }
     }
 
