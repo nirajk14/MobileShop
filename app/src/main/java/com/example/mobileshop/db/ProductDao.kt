@@ -14,10 +14,11 @@ interface ProductDao {
     @Query("SELECT * FROM products")
     suspend fun getAllProducts(): List<Product>
 
-
-
     @Query("SELECT * FROM products WHERE id = :productId")
     suspend fun getProductById(productId: Int): Product?
+
+    @Query("SELECT * FROM products LIMIT :pageSize OFFSET :offset")
+    suspend fun getProductsByPage(pageSize: Int, offset: Int): List<Product>
 
 
 }

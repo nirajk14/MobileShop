@@ -20,10 +20,12 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.PagingData
 import com.example.mobileshop.api_recycler_view.Product
 import com.example.mobileshop.db.DBState
 import com.example.mobileshop.db.LocalImageEntity
 import com.example.mobileshop.db.ProductWithLocalImages
+import com.example.mobileshop.paging.ProductPagingAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -34,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var productAdapter: ProductAdapter
+    private lateinit var productAdapter: ProductPagingAdapter
     var refresh = false
 
 
@@ -45,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     val emptyProduct = Product()
 
-    private var recyclerViewData: List<Product> = listOf(emptyProduct)
+    private var recyclerViewData: PagingData<Product> = PagingData.empty()
     private lateinit var builder: AlertDialog.Builder
 
     //    private var localImageData: ProductWithLocalImages? = null
@@ -170,17 +172,15 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initRecyclerView(
-        productList: List<Product>
+        productData: PagingData<Product>
     ) {
-        productAdapter = ProductAdapter(productList) { product ->
-            val intent = Intent(this, SingleViewActivity::class.java)
-            intent.putExtra("singleItemData", product)
-            startActivity(intent)
-        }
+        productAdapter = ProductPagingAdapter()
         binding.recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = productAdapter
+            productAdapter.submitData(lifecycle, productData)
+
         }
     }
 

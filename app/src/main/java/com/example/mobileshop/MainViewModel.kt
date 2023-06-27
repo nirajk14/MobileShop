@@ -32,7 +32,7 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
     fun getAllProducts(refresh: Boolean) = viewModelScope.launch {
         println("getAllProducts")
         _productDataStateFlow.value= DBState.Loading
-        mainRepository.getAllProducts(refresh)
+        mainRepository.getProducts()
             .catch { e->
                 _productDataStateFlow.value= DBState.Failure(e)
             }
