@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.mobileshop.api_recycler_view.ApiService
 import com.example.mobileshop.api_recycler_view.ApiServiceImpl
+import com.example.mobileshop.api_recycler_view.TokenInterceptor
 import com.example.mobileshop.db.AppDatabase
 import com.example.mobileshop.db.LocalImageDao
 import com.example.mobileshop.db.ProductDao
@@ -13,6 +14,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -20,40 +23,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Provides
-    fun providesUrl()= "https://dummyjson.com/"
-
-    @Provides
-    @Singleton
-    fun providesApiService(url: String) : ApiService =
-        Retrofit.Builder()
-            .baseUrl(url)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiService::class.java)
-
-    @Provides
-    @Singleton
-    fun providesDatabase(@ApplicationContext context: Context) : AppDatabase =
-        Room.databaseBuilder(context,AppDatabase::class.java,"userDatabase")
-            .fallbackToDestructiveMigration()
-            .build()
-
-    @Provides
-    fun providesProductDao(appDatabase: AppDatabase) : ProductDao =
-        appDatabase.productDao()
-
-    @Provides
-    fun providesLocalImageDao(appDatabase: AppDatabase): LocalImageDao =
-        appDatabase.localImageDao()
-
-
-    @Provides
-    fun provideApiService(): ApiServiceImpl =
-        ApiServiceImpl(providesApiService(providesUrl()))
     @Provides
     fun providesMainRepository(productDao: ProductDao, localImageDao: LocalImageDao): MainRepository =    MainRepository(
-        provideApiService(), productDao, localImageDao
+        NetworkModule.provideApiService(), productDao, localImageDao
     )
 }

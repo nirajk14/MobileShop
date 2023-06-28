@@ -133,46 +133,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private fun observeProductData() {
 
         lifecycleScope.launch {
-
-            //launch when X is deprecated hence use .launch{ and then put repeatOnLifecycle(STATE){ Put code here }}
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                mainViewModel.getAllProducts(false)
-
-                mainViewModel.productDataStateFlow.collect {
-
-                    when (it) {
-                        is DBState.Loading -> {
-                            println("Loading")
-                            binding.recyclerView.isVisible = false
-                            binding.progressBar.isVisible = true
-                        }
-
-                        is DBState.Failure -> {
-                            println("Failure")
-                            binding.recyclerView.isVisible = false
-                            binding.progressBar.isVisible = false
-                            Log.d("HEHE YOU GOT AN ERROR", "GET REKT IT'S DB CALL ${it.msg}")
-
-                        }
-
-                        is DBState.SuccessProduct -> {
-                            println("Success")
-                            binding.recyclerView.isVisible = true
-                            binding.progressBar.isVisible = false
-                            productAdapter.submitData(lifecycle,it.data)
-                            binding.recyclerView.apply {
+            mainViewModel.flow.collectLatest {
+                productAdapter.submitData(lifecycle,it)
+                binding.recyclerView.apply {
 //            setHasFixedSize(true)
-                                layoutManager = LinearLayoutManager(this@MainActivity)
-                                adapter = productAdapter
-                            }
-                        }
+                    layoutManager = LinearLayoutManager(this@MainActivity)
+                    adapter = productAdapter
 
-                        else -> {
-                            println("Empty")
-                        }
-                    }
                 }
+
             }
+
+
 
         }
     }

@@ -2,6 +2,7 @@ package com.example.mobileshop.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.example.mobileshop.api_recycler_view.ApiResponse
 import com.example.mobileshop.api_recycler_view.ApiServiceImpl
 import com.example.mobileshop.api_recycler_view.Product
@@ -17,8 +18,8 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class MainRepository @Inject constructor(
-    private val apiServiceImpl: ApiServiceImpl,
-    private val productDao: ProductDao,
+    val apiServiceImpl: ApiServiceImpl,
+    val productDao: ProductDao,
     private val localImageDao: LocalImageDao
 ) {
 
@@ -33,13 +34,13 @@ class MainRepository @Inject constructor(
         }
     }
 
-    suspend fun getAllProducts(refresh: Boolean): Flow<List<Product>> = flow {
-        if (refresh)
-            insertApiDataToDB(apiServiceImpl.getProducts())
+    suspend fun getAllProducts(limit: Int, skip: Int, insertDB: Boolean): Flow<List<Product>> = flow {
+        if (insertDB)
+            insertApiDataToDB(apiServiceImpl.getProducts(limit,skip))
         emit(productDao.getAllProducts())
     }.flowOn(Dispatchers.IO)
 
-    suspend fun getAllProducts(pageNumber: Int, pageSize: Int, refresh: Boolean): Flow<List<Product>> = flow {
+    suspend fun getAllProductsfromDB(pageNumber: Int, pageSize: Int, refresh: Boolean): Flow<List<Product>> = flow {
         val offset = (pageNumber - 1) * pageSize
         var products: List<Product>
 
