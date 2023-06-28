@@ -18,15 +18,15 @@ class ProductPagingSource(private val productDao: ProductDao, private val apiSer
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
         return try {
             val page = params.key ?: 1
+            val limit= params.loadSize
+            val skip= (page-1) * limit
 
-
-//            val position = params.key?:1
-            val response = apiServiceImpl.getProducts()
+            val response = apiServiceImpl.getProducts(limit, skip)
             println(response.products.size)
             LoadResult.Page(
                 data = response.products,
-                prevKey = null,
-                nextKey = response.products[page].id + 1
+                prevKey = if (page>1) page-1 else null,
+                nextKey = if (response.products.isNotEmpty()) page +1 else null
             )
         } catch (e: Exception){
             e.printStackTrace()

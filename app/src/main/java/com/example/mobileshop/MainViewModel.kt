@@ -32,7 +32,7 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 
 
     val flow = Pager(
-        config = PagingConfig(pageSize = 1, prefetchDistance = 0, maxSize = 2),
+        config = PagingConfig(pageSize = 6), //the pageSize is equal to params.loadSize
         pagingSourceFactory ={
             ProductPagingSource(mainRepository.productDao,mainRepository.apiServiceImpl)
         }
