@@ -1,6 +1,8 @@
-package com.example.mobileshop.api_recycler_view
+package com.example.mobileshop.network
 
 
+import com.example.mobileshop.model.ApiResponse
+import com.example.mobileshop.model.Product
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
@@ -22,7 +24,7 @@ interface ApiService {
     @GET("/products/{productId}")
     suspend fun getProductById(
         @Path("productId") productId: Int
-    ): ApiResponse
+    ): Product
 
 
 }

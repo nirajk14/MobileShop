@@ -1,10 +1,8 @@
-package com.example.mobileshop.db
+package com.example.mobileshop.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
-import com.example.mobileshop.api_recycler_view.Product
 
 
 @Entity(tableName="local_image", primaryKeys = ["productId", "id"], foreignKeys = [

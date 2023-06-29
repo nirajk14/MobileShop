@@ -1,7 +1,7 @@
-package com.example.mobileshop
+package com.example.mobileshop.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.mobileshop.db.LocalImageEntity
+import com.example.mobileshop.model.LocalImageEntity
 
 class MyDiffUtil(private val oldList: List<LocalImageEntity>, private val newList: List<LocalImageEntity>) : DiffUtil.Callback() {
     override fun getOldListSize(): Int {

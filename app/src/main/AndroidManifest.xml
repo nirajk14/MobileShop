@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
     <application
-        android:name=".di.BaseApp"
+        android:name=".BaseApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -27,10 +27,10 @@
             android:name=".BaseActivity"
             android:exported="false" />
         <activity
-            android:name=".SingleViewActivity"
+            android:name=".product_view.ProductViewActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".main_view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

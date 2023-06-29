@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.example.mobileshop.model.LocalImageEntity
 import kotlinx.coroutines.flow.Flow
 
 

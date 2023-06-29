@@ -1,18 +1,14 @@
-package com.example.mobileshop
+package com.example.mobileshop.product_view
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mobileshop.databinding.LocalImageCardBinding
-import com.example.mobileshop.databinding.ProductCardBinding
-import com.example.mobileshop.db.LocalImageEntity
-import com.example.mobileshop.db.ProductWithLocalImages
+import com.example.mobileshop.R
+import com.example.mobileshop.model.LocalImageEntity
+import com.example.mobileshop.utils.MyDiffUtil
 import com.squareup.picasso.Picasso
 
 class LocalImageAdapter():

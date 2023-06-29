@@ -4,11 +4,11 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.mobileshop.api_recycler_view.Product
+import com.example.mobileshop.model.Product
 
 @Dao
 interface ProductDao {
-    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    @Insert (onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(vararg product: Product)
 
     @Query("SELECT * FROM products")

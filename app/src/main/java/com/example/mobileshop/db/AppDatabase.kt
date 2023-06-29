@@ -5,10 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.mobileshop.api_recycler_view.Product
-import javax.inject.Singleton
+import com.example.mobileshop.model.LocalImageEntity
+import com.example.mobileshop.model.Product
 
-@Database(entities = [Product::class,LocalImageEntity::class], version = 7)
+@Database(entities = [Product::class, LocalImageEntity::class], version = 7)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao

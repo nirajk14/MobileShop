@@ -1,4 +1,4 @@
-package com.example.mobileshop.api_recycler_view
+package com.example.mobileshop.network
 
 import okhttp3.Interceptor
 import okhttp3.Response

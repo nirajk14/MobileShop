@@ -1,4 +1,4 @@
-package com.example.mobileshop.api_recycler_view
+package com.example.mobileshop.model
 
 
 import androidx.room.Entity
@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
 
 final data class ApiResponse(
 
-    @SerializedName("products") var products: List<Product> = arrayListOf(),
+    @SerializedName("products") var products: List<Product> = listOf(),
     @SerializedName("total") var total: Int? = null,
     @SerializedName("skip") var skip: Int? = null,
     @SerializedName("limit") var limit: Int? = null

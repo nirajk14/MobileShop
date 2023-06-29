@@ -2,15 +2,13 @@ package com.example.mobileshop.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.cachedIn
-import com.example.mobileshop.api_recycler_view.ApiResponse
-import com.example.mobileshop.api_recycler_view.ApiServiceImpl
-import com.example.mobileshop.api_recycler_view.Product
+import com.example.mobileshop.model.ApiResponse
+import com.example.mobileshop.network.ApiServiceImpl
+import com.example.mobileshop.model.Product
 import com.example.mobileshop.db.LocalImageDao
-import com.example.mobileshop.db.LocalImageEntity
+import com.example.mobileshop.model.LocalImageEntity
 import com.example.mobileshop.db.ProductDao
-import com.example.mobileshop.db.ProductWithLocalImages
-import com.example.mobileshop.paging.ProductPagingSource
+import com.example.mobileshop.main_view.ProductPagingSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -22,6 +20,10 @@ class MainRepository @Inject constructor(
     val productDao: ProductDao,
     private val localImageDao: LocalImageDao
 ) {
+
+    suspend fun getProductById(productId: Int): Flow<Product> = flow {
+        emit(apiServiceImpl.getProductById(productId))
+    }.flowOn(Dispatchers.IO)
 
 
     private suspend fun insertProduct(product: Product) {
@@ -50,10 +52,10 @@ class MainRepository @Inject constructor(
         emit(products)
     }.flowOn(Dispatchers.IO)
 
-    fun getProducts()= Pager(
-        config = PagingConfig(0, maxSize = 30),
+    fun getProducts(insertDB: Boolean)= Pager(
+        config = PagingConfig(pageSize = 6), //the pageSize is equal to params.loadSize
         pagingSourceFactory ={
-            ProductPagingSource(productDao,apiServiceImpl)
+            ProductPagingSource(productDao,apiServiceImpl,insertDB)
         }
     ).flow
 

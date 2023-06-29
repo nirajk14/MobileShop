@@ -1,25 +1,18 @@
-package com.example.mobileshop
+package com.example.mobileshop.utils
 
-import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.mobileshop.main_view.MainActivity
 
 class PermissionHelper(private val activity: MainActivity)  {
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     var isReadPermissionGranted = false
     var isWritePermissionGranted = false
 
-    fun checkPermissionAvailability() {
-        permissionLauncher = activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            isReadPermissionGranted = permissions[android.Manifest.permission.READ_EXTERNAL_STORAGE] ?: isReadPermissionGranted
-            isWritePermissionGranted = permissions[android.Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: isWritePermissionGranted
-        }
-    }
+
 
     fun requestPermission() {
 

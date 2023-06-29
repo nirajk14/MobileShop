@@ -1,4 +1,4 @@
-package com.example.mobileshop
+package com.example.mobileshop.main_view
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,9 +6,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mobileshop.R
 import com.example.mobileshop.databinding.ProductCardBinding
 import com.squareup.picasso.Picasso
-import com.example.mobileshop.api_recycler_view.Product
+import com.example.mobileshop.model.Product
 
 class ProductAdapter(var mList: List<Product>,
                      private val onItemClick:(product: Product)->Unit):

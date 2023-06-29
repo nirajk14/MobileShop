@@ -13,6 +13,7 @@ abstract class BaseActivity<T:ViewBinding> : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = createBinding()
         setContentView(binding.root)
+
     }
 
     abstract fun createBinding(): T

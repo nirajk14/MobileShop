@@ -1,13 +1,19 @@
-package com.example.mobileshop.paging
+package com.example.mobileshop.main_view
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.mobileshop.api_recycler_view.ApiServiceImpl
-import com.example.mobileshop.api_recycler_view.Product
+import com.example.mobileshop.network.ApiServiceImpl
+import com.example.mobileshop.model.Product
 import com.example.mobileshop.db.ProductDao
 import java.lang.Exception
 
-class ProductPagingSource(private val productDao: ProductDao, private val apiServiceImpl: ApiServiceImpl): PagingSource<Int, Product>() {
+class ProductPagingSource(private val productDao: ProductDao, private val apiServiceImpl: ApiServiceImpl, private val insertDB: Boolean): PagingSource<Int, Product>() {
+
+    private suspend fun insertProduct(products: List<Product>) {
+        products.forEach { product ->
+            productDao.insert(product)
+        }
+    }
 
 
 
@@ -23,6 +29,8 @@ class ProductPagingSource(private val productDao: ProductDao, private val apiSer
 
             val response = apiServiceImpl.getProducts(limit, skip)
             println(response.products.size)
+            if (insertDB)
+                insertProduct(response.products)
             LoadResult.Page(
                 data = response.products,
                 prevKey = if (page>1) page-1 else null,

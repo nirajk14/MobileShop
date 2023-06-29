@@ -4,5 +4,9 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">10dp</item> <!-- Adjust the corner radius as per your requirements -->
     </style>
+    <style name="AppToolbar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:tint">@color/orange</item>
+    </style>
+
 
 </resources>

@@ -1,4 +1,4 @@
-package com.example.mobileshop.paging
+package com.example.mobileshop.main_view
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,19 +9,20 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mobileshop.R
-import com.example.mobileshop.api_recycler_view.Product
+import com.example.mobileshop.model.Product
 import com.squareup.picasso.Picasso
 
-class ProductPagingAdapter :
+class ProductPagingAdapter(private val onItemClick:(product: Product)->Unit) :
     PagingDataAdapter<Product, ProductPagingAdapter.ProductViewHolder>(COMPARATOR) {
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = getItem(position)
         product?.let {
             holder.bind(it)
+            holder.itemView.setOnClickListener {
+                onItemClick(product)
+            }
         }
-
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
@@ -30,15 +31,12 @@ class ProductPagingAdapter :
     }
 
     inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-
         val textView: TextView = itemView.findViewById(R.id.textView)
         val tvPrice: TextView = itemView.findViewById(R.id.tvPrice)
         val tvRating: TextView = itemView.findViewById(R.id.tvRating)
         val tvStock: TextView = itemView.findViewById(R.id.tvStock)
         val imageView: ImageView = itemView.findViewById(R.id.imageView)
         val tvBrand: TextView = itemView.findViewById(R.id.tvBrand)
-
         fun bind(product: Product) {
             textView.text = product.title
             tvBrand.text = product.brand
@@ -56,12 +54,8 @@ class ProductPagingAdapter :
         val COMPARATOR = object : DiffUtil.ItemCallback<Product>() {
             override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean =
                 oldItem.id == newItem.id
-
             override fun areContentsTheSame(oldItem: Product, newItem: Product): Boolean =
                 oldItem == newItem
-
         }
     }
-
-
 }

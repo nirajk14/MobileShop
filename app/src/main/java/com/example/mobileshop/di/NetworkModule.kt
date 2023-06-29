@@ -1,8 +1,8 @@
 package com.example.mobileshop.di
 
-import com.example.mobileshop.api_recycler_view.ApiService
-import com.example.mobileshop.api_recycler_view.ApiServiceImpl
-import com.example.mobileshop.api_recycler_view.TokenInterceptor
+import com.example.mobileshop.network.ApiService
+import com.example.mobileshop.network.ApiServiceImpl
+import com.example.mobileshop.network.TokenInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
