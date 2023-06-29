@@ -23,8 +23,8 @@
         app:layout_constraintTop_toBottomOf="@id/includedSingle"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="2dp"
+        android:layout_marginStart="5dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         />
 
 
@@ -47,7 +47,7 @@
         android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"
-        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         />
 
     <TextView
@@ -59,7 +59,7 @@
         app:layout_constraintTop_toBottomOf="@id/brand"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
-        android:layout_marginLeft="5dp"/>
+        android:layout_marginStart="5dp"/>
 
     <TextView
         android:id="@+id/description"
@@ -70,7 +70,7 @@
         app:layout_constraintTop_toBottomOf="@id/category"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
-        android:layout_marginLeft="5dp"/>
+        android:layout_marginStart="5dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -82,7 +82,7 @@
         app:layout_constraintTop_toBottomOf="@id/category"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
-        android:layout_marginLeft="5dp"/>
+        android:layout_marginStart="5dp"/>
 
 
 
@@ -95,7 +95,7 @@
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:backgroundTint="@color/orange"/>
+        android:backgroundTint="#8C8C8C"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

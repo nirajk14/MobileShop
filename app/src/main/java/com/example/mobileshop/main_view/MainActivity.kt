@@ -45,10 +45,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         initObservers()
     }
 
-    override fun onResume() {
-        super.onResume()
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-    }
     private fun initViews() {
         with(binding) {
 

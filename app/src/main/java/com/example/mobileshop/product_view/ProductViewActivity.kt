@@ -39,10 +39,6 @@ class ProductViewActivity : BaseActivity<ActivityProductViewBinding>() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-    }
 
     private fun initObservers(productId: Int) {
         productViewModel.getProductById(productId)
