@@ -14,6 +14,8 @@ sealed class FlowState {
 
     class SuccessProduct(val data: Product): FlowState()
 
+    class SuccessProductCategory(val category: List<String>): FlowState()
+
     class SuccessProductWithLocalImageFlow(val data: Flow<List<LocalImageEntity>>): FlowState()
     class SuccessProductWithLocalImage(val data: List<LocalImageEntity>): FlowState()
     object Empty: FlowState()

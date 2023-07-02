@@ -1,8 +1,10 @@
 package com.example.mobileshop.product_view
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
@@ -78,7 +80,7 @@ class ProductViewActivity : BaseActivity<ActivityProductViewBinding>() {
                 }
             }
             includedSingle.backButton.setOnClickListener {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
             includedSingle.titleText.text="  Mobile Shop Application"
 
@@ -137,20 +139,16 @@ class ProductViewActivity : BaseActivity<ActivityProductViewBinding>() {
         }
     }
 
-    private fun pickImageGallery(productId: Int) {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type =
-            "image/*"  //  */* means all  application/pdf allows only pdf file to be selected
-        startActivityForResult(intent, 100)
-
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 100 && resultCode == RESULT_OK) {
-            Picasso.get().load(data?.data).resize(600,600).centerCrop().into(binding.imgView)
-            productViewModel.insertImageToRecyclerView(data?.data.toString(), product.id)
+    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        if (uri != null) {
+            Picasso.get().load(uri).resize(600, 600).centerCrop().into(binding.imgView)
+            productViewModel.insertImageToRecyclerView(uri.toString(), product.id)
         }
     }
+
+    private fun pickImageGallery(productId: Int) {
+        galleryLauncher.launch("image/*")
+    }
+
 
 }

@@ -21,6 +21,10 @@ class MainRepository @Inject constructor(
     private val localImageDao: LocalImageDao
 ) {
 
+    suspend fun completeList() = apiServiceImpl.getProducts(100,0).products
+
+    suspend fun categoryList():Flow<List<String>> = flow{ emit(completeList().mapNotNull { it.category }.distinct()) }.flowOn(Dispatchers.IO)
+
     suspend fun getProductById(productId: Int): Flow<Product> = flow {
         emit(apiServiceImpl.getProductById(productId))
     }.flowOn(Dispatchers.IO)
@@ -52,10 +56,10 @@ class MainRepository @Inject constructor(
         emit(products)
     }.flowOn(Dispatchers.IO)
 
-    fun getProducts(insertDB: Boolean, searchQuery: String?)= Pager(
+    fun getProducts(insertDB: Boolean, searchQuery: String?,chipQuery: List<String>)= Pager(
         config = PagingConfig(pageSize = 6), //the pageSize is equal to params.loadSize
         pagingSourceFactory ={
-            ProductPagingSource(productDao,apiServiceImpl,insertDB, searchQuery)
+            ProductPagingSource(productDao,apiServiceImpl,insertDB, searchQuery, chipQuery)
         }
     ).flow
 

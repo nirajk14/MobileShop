@@ -24,6 +24,8 @@ class ProductViewModel @Inject constructor(private val mainRepository: MainRepos
     private val _localImageSharedFlow: MutableSharedFlow<FlowState> = MutableSharedFlow(2)
     val localImageSharedFlow: SharedFlow<FlowState> = _localImageSharedFlow
 
+
+
     fun insertImageToRecyclerView(url: String, productId: Int) = viewModelScope.launch {
         mainRepository.insertImageToRecyclerView(url,productId)
     }

@@ -7,7 +7,13 @@ import com.example.mobileshop.model.Product
 import com.example.mobileshop.db.ProductDao
 import java.lang.Exception
 
-class ProductPagingSource(private val productDao: ProductDao, private val apiServiceImpl: ApiServiceImpl, private val insertDB: Boolean, private val searchQuery: String?): PagingSource<Int, Product>() {
+class ProductPagingSource(
+    private val productDao: ProductDao,
+    private val apiServiceImpl: ApiServiceImpl,
+    private val insertDB: Boolean,
+    private val searchQuery: String?,
+    private val chipQuery: List<String>
+) : PagingSource<Int, Product>() {
 
     private suspend fun insertProduct(products: List<Product>) {
         products.forEach { product ->
@@ -16,16 +22,15 @@ class ProductPagingSource(private val productDao: ProductDao, private val apiSer
     }
 
 
-
     override fun getRefreshKey(state: PagingState<Int, Product>): Int? {
-        return state.anchorPosition?.let { position-> state.closestItemToPosition(position)?.id }
+        return state.anchorPosition?.let { position -> state.closestItemToPosition(position)?.id }
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
         return try {
             val page = params.key ?: 1
-            val limit= params.loadSize
-            val skip= (page-1) * limit
+            val limit = params.loadSize
+            val skip = (page - 1) * limit
             var prevKey: Int? = null
             var nextKey: Int? = null
 
@@ -34,20 +39,13 @@ class ProductPagingSource(private val productDao: ProductDao, private val apiSer
             if (insertDB)
                 insertProduct(response.products)
 
-            val filteredList = if (searchQuery != null) {
-                apiServiceImpl.getProducts(100,0).products.filter { product ->
-                    product.title!!.contains(searchQuery, ignoreCase = true)
-                }
-            } else {
-                response.products
-            };
+            val filteredList = filterList(limit, skip)
 
-            if (searchQuery!=null){
+            if (searchQuery != null) {
                 prevKey = null
                 nextKey = null
-            }
-            else{
-                prevKey = if(page>1) page- 1  else null
+            } else {
+                prevKey = if (page > 1) page - 1 else null
                 nextKey = if (response.products.isNotEmpty()) page + 1 else null
             }
 
@@ -56,9 +54,34 @@ class ProductPagingSource(private val productDao: ProductDao, private val apiSer
                 prevKey,
                 nextKey
             )
-        } catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             LoadResult.Error(e)
         }
     }
+
+    private suspend fun filterList(limit: Int, skip: Int): List<Product> {
+        val completeList = apiServiceImpl.getProducts(100, 0).products
+        val response = apiServiceImpl.getProducts(limit, skip).products
+        val chipFilteredList = if (chipQuery.isNotEmpty()) {
+            completeList.filter { product ->
+                val productCategory = product.category
+                chipQuery.any { chipText ->
+                    productCategory?.contains(chipText, ignoreCase = true) == true
+                }
+            }
+        } else {
+            response
+        }
+
+        val searchFilteredList = if (searchQuery != null) {
+            chipFilteredList.filter { product ->
+                product.title?.contains(searchQuery, ignoreCase = true) == true
+            }
+        } else {
+            chipFilteredList
+        }
+
+        return searchFilteredList
     }
+}
