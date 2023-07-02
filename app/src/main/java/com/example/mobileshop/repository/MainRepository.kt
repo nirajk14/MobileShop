@@ -21,7 +21,7 @@ class MainRepository @Inject constructor(
     private val localImageDao: LocalImageDao
 ) {
 
-    suspend fun completeList() = apiServiceImpl.getProducts(100,0).products
+    private suspend fun completeList() = apiServiceImpl.getProducts(100,0).products
 
     suspend fun categoryList():Flow<List<String>> = flow{ emit(completeList().mapNotNull { it.category }.distinct()) }.flowOn(Dispatchers.IO)
 

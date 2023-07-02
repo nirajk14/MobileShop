@@ -29,6 +29,10 @@
 
 
 
+
+
+
+
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
@@ -36,38 +40,116 @@
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/topColon"
         app:layout_constraintTop_toBottomOf="@id/imgView"
         android:padding="5dp"/>
 
+
+
+    <TextView
+        android:id="@+id/constBrand"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintEnd_toStartOf="@id/topColon"
+        android:text="Brand"
+        android:textColor="@color/black"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginStart="5dp"/>
+
+    <TextView
+        android:id="@+id/topColon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text=":"
+        android:textColor="@color/black"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginStart="5dp"/>
+
     <TextView
         android:id="@+id/brand"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/topColon"
         app:layout_constraintTop_toBottomOf="@id/title"
         android:layout_marginStart="5dp"
         />
 
+
+    <TextView
+        android:id="@+id/constCategory"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/topColon"
+        app:layout_constraintEnd_toStartOf="@id/midColon"
+        android:text="Category"
+        android:textColor="@color/black"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginStart="5dp"/>
+
+    <TextView
+        android:id="@+id/midColon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/topColon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text=":"
+        android:textColor="@color/black"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginStart="5dp"/>
+
     <TextView
         android:id="@+id/category"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/midColon"
         app:layout_constraintTop_toBottomOf="@id/brand"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
         android:layout_marginStart="5dp"/>
 
     <TextView
-        android:id="@+id/description"
-        android:layout_width="match_parent"
+        android:id="@+id/constDesc"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/midColon"
+        app:layout_constraintEnd_toStartOf="@id/botColon"
+        android:text="Description"
         android:textColor="@color/black"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginStart="5dp"/>
+
+    <TextView
+        android:id="@+id/botColon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/midColon"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text=":"
+        android:textColor="@color/black"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginStart="5dp"/>
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/botColon"
         app:layout_constraintTop_toBottomOf="@id/category"
+        android:textColor="@color/black"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
         android:layout_marginStart="5dp"/>

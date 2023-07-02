@@ -64,9 +64,9 @@ class ProductViewActivity : BaseActivity<ActivityProductViewBinding>() {
         val builder = AlertDialog.Builder(this)
         with(binding){
                 title.text = product.title.toString()
-                brand.text = "Brand:" + product.brand.toString()
-                category.text ="Category:" + product.category.toString()
-                description.text = "Description:" + product.description.toString()
+                brand.text = product.brand.toString()
+                category.text =product.category.toString()
+                description.text = product.description.toString()
                 Picasso.get().load(product.images[0]).resize(1000, 800).centerCrop().into(imgView)
                 initRecyclerView(product.id)
 
