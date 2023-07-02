@@ -148,7 +148,7 @@ class ProductViewActivity : BaseActivity<ActivityProductViewBinding>() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 100 && resultCode == RESULT_OK) {
-            Picasso.get().load(data?.data).into(binding.imgView)
+            Picasso.get().load(data?.data).resize(600,600).centerCrop().into(binding.imgView)
             productViewModel.insertImageToRecyclerView(data?.data.toString(), product.id)
         }
     }

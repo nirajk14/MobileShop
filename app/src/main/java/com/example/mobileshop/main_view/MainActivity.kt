@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mobileshop.databinding.ActivityMainBinding
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.marginLeft
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mobileshop.BaseActivity
 import com.example.mobileshop.utils.PermissionHelper
 import com.example.mobileshop.R
@@ -36,6 +38,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private val mainViewModel: MainViewModel by viewModels()
     private val permissionHelper: PermissionHelper = PermissionHelper(this)
     private lateinit var builder: AlertDialog.Builder
+    private var searchQuery: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        setSupportActionBar(findViewById(R.id.mainAppBar))
@@ -47,6 +50,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun initViews() {
         with(binding) {
+
+            searchView.clearFocus()
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
+                }
+
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    searchQuery=newText
+                    observeProductData()
+//                    recyclerView.scrollToPosition(0)
+                    return true
+                }
+            })
 
             swipeRefresh.setOnRefreshListener {
                swipeRefresh.isRefreshing = false
@@ -61,8 +79,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     else -> false
                 }
             }
-            }
 
+            }
 
         }
     }
@@ -75,7 +93,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
     private fun observeProductData() {
         lifecycleScope.launch {
-            mainViewModel.paginatedProduct(true).collectLatest {
+            mainViewModel.paginatedProduct(true, searchQuery).collectLatest {
                 productAdapter.submitData(lifecycle,it)
                 binding.recyclerView.apply {
                     layoutManager = LinearLayoutManager(this@MainActivity)

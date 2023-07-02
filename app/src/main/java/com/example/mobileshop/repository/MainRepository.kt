@@ -52,10 +52,10 @@ class MainRepository @Inject constructor(
         emit(products)
     }.flowOn(Dispatchers.IO)
 
-    fun getProducts(insertDB: Boolean)= Pager(
+    fun getProducts(insertDB: Boolean, searchQuery: String?)= Pager(
         config = PagingConfig(pageSize = 6), //the pageSize is equal to params.loadSize
         pagingSourceFactory ={
-            ProductPagingSource(productDao,apiServiceImpl,insertDB)
+            ProductPagingSource(productDao,apiServiceImpl,insertDB, searchQuery)
         }
     ).flow
 

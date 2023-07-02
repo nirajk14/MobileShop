@@ -18,6 +18,18 @@
             android:id="@+id/includedMain"
             layout="@layout/toolbar"/>
 
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/search_view_bg"
+            app:queryHint="Search Here...."
+            app:iconifiedByDefault="false"
+            app:layout_constraintTop_toBottomOf="@id/includedMain"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -27,8 +39,30 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/includedMain"
+            app:layout_constraintTop_toBottomOf="@id/searchView"
             />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="80dp"
+            android:src="@drawable/ic_up"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:backgroundTint="#8C8C8C"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabDown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_down"
+            app:layout_constraintTop_toBottomOf="@id/fabUp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:backgroundTint="#8C8C8C"/>
 
 
 

@@ -12,5 +12,5 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 //    val flow = mainRepository.getProducts()
 //        .cachedIn(viewModelScope)
 
-    fun paginatedProduct(insertDB: Boolean)= mainRepository.getProducts(insertDB).cachedIn(viewModelScope)
+    fun paginatedProduct(insertDB: Boolean, searchQuery: String?)= mainRepository.getProducts(insertDB, searchQuery).cachedIn(viewModelScope)
 }
