@@ -25,6 +25,7 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
         _productCategoryStateFlow.value= FlowState.Loading
         mainRepository.categoryList()
             .catch {e->
+                e.printStackTrace()
                 _productCategoryStateFlow.value= FlowState.Failure(e)
             }
             .collectLatest { category->

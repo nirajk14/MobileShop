@@ -46,7 +46,7 @@ class ProductPagingAdapter(private val onItemClick:(product: Product)->Unit) :
             else
                 tvStock.setText("In Stock: ${product.stock}")
             tvRating.setText("\u2B50" + " " + product.rating.toString() + "/5")
-            Picasso.get().load(product.images[0]).resize(1000, 600).centerCrop().into(imageView)
+            Picasso.get().load(product.images[0]).resize(1000, 600).placeholder(R.drawable.progress_animation).centerInside().into(imageView)
         }
     }
 

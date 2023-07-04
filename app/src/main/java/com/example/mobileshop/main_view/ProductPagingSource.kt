@@ -39,9 +39,9 @@ class ProductPagingSource(
             if (insertDB)
                 insertProduct(response.products)
 
-            val filteredList = filterList(limit, skip)
+            val filteredList = filterList(limit, skip,response.products)
 
-            if (searchQuery != null) {
+            if (searchQuery != null || chipQuery.isNotEmpty()) {
                 prevKey = null
                 nextKey = null
             } else {
@@ -60,28 +60,31 @@ class ProductPagingSource(
         }
     }
 
-    private suspend fun filterList(limit: Int, skip: Int): List<Product> {
-        val completeList = apiServiceImpl.getProducts(100, 0).products
-        val response = apiServiceImpl.getProducts(limit, skip).products
-        val chipFilteredList = if (chipQuery.isNotEmpty()) {
-            completeList.filter { product ->
-                val productCategory = product.category
-                chipQuery.any { chipText ->
-                    productCategory?.contains(chipText, ignoreCase = true) == true
+    private suspend fun filterList(limit: Int, skip: Int, defaultResponse: List<Product>): List<Product> {
+        if (chipQuery.isNotEmpty() || searchQuery != null) {
+            val completeList = apiServiceImpl.getProducts(100, 0).products
+
+            val chipFilteredList = if (chipQuery.isNotEmpty()) {
+                completeList.filter { product ->
+                    val productCategory = product.category
+                    chipQuery.any { chipText ->
+                        productCategory?.contains(chipText, ignoreCase = true) == true
+                    }
                 }
+            } else {
+                completeList
             }
-        } else {
-            response
-        }
 
-        val searchFilteredList = if (searchQuery != null) {
-            chipFilteredList.filter { product ->
-                product.title?.contains(searchQuery, ignoreCase = true) == true
+            val searchFilteredList = if (searchQuery != null) {
+                chipFilteredList.filter { product ->
+                    product.title?.contains(searchQuery, ignoreCase = true) == true
+                }
+            } else {
+                chipFilteredList
             }
-        } else {
-            chipFilteredList
-        }
 
-        return searchFilteredList
+            return searchFilteredList
+        }
+        return defaultResponse
     }
 }

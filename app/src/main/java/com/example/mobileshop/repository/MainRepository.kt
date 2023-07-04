@@ -18,7 +18,7 @@ import javax.inject.Inject
 class MainRepository @Inject constructor(
     val apiServiceImpl: ApiServiceImpl,
     val productDao: ProductDao,
-    private val localImageDao: LocalImageDao
+    val localImageDao: LocalImageDao
 ) {
 
     private suspend fun completeList() = apiServiceImpl.getProducts(100,0).products
@@ -46,7 +46,7 @@ class MainRepository @Inject constructor(
         emit(productDao.getAllProducts())
     }.flowOn(Dispatchers.IO)
 
-    suspend fun getAllProductsfromDB(pageNumber: Int, pageSize: Int, refresh: Boolean): Flow<List<Product>> = flow {
+    suspend fun getAllProductsFromDB(pageNumber: Int, pageSize: Int, refresh: Boolean): Flow<List<Product>> = flow {
         val offset = (pageNumber - 1) * pageSize
         var products: List<Product>
 

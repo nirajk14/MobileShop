@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.util.query
 import com.example.mobileshop.BaseActivity
 import com.example.mobileshop.utils.PermissionHelper
 import com.example.mobileshop.R
@@ -19,6 +20,11 @@ import com.example.mobileshop.product_view.ProductViewActivity
 import com.example.mobileshop.utils.FlowState
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -42,6 +48,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var builder: AlertDialog.Builder
     private var searchQuery: String? = null
     private var chipQuery: MutableList<String> = mutableListOf()
+    private var searchJob: Job? = null
+
+    private val queryTextChanges: MutableSharedFlow<String?> = MutableSharedFlow()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        setSupportActionBar(findViewById(R.id.mainAppBar))
@@ -53,6 +62,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun initViews() {
         with(binding) {
+            recyclerView.apply {
+                layoutManager = LinearLayoutManager(this@MainActivity)
+                adapter = productAdapter
+
+            }
 
             searchView.clearFocus()
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
@@ -62,8 +76,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
 
                 override fun onQueryTextChange(newText: String?): Boolean {
+//                    setSearchQuery()
+                    searchJob?.cancel()
                     searchQuery=newText
-                    observeProductData()
+                    searchJob= CoroutineScope(Dispatchers.Main).launch {
+                        delay(1200)
+                        observeProductData()
+                    }
+
+
 //                    recyclerView.scrollToPosition(0)
                     return true
                 }
@@ -73,12 +94,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                swipeRefresh.isRefreshing = false
             }
             with(includedMain){
-            with(backButton) {
-                visibility=View.GONE
-            }
+//            with(backButton) {
+//                visibility=View.GONE
+//                //done use extension function for visibility
+//            }
+                backButton.hide()
             mainAppBar.setOnMenuItemClickListener{ menuItem ->
                 when (menuItem.itemId) {
                     R.id.infoButton -> showInfoDialog(builder)
+                    R.id.camera -> {
+                        permissionHelper.requestCameraPermission()
+                        true
+                    }
                     else -> false
                 }
             }
@@ -93,6 +120,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     }
 
+    //todo sonarlint
+
     private fun observeChipGroupData() {
         lifecycleScope.launch {
             mainViewModel.getCategory()
@@ -103,10 +132,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         for(chipData in it.category){
                             val chip = createChip(chipData)
                             chip.isCheckable=true
-                            chip.setOnClickListener { view ->
-                                val clickedChip = view as Chip
-                                val chipText = clickedChip.text
-                            }
                             chip.setOnCheckedChangeListener { buttonView, isChecked ->
                                 if (isChecked){
                                     chip.setChipBackgroundColorResource(R.color.orange)
@@ -115,7 +140,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                                     observeProductData()
                                 }
                                 else{
-                                    chip.setChipBackgroundColorResource(R.color.white)
+                                    chip.setChipBackgroundColorResource(R.color.gray)
                                     chipQuery.remove(chip.text as String)
                                     observeProductData()
                                 }
@@ -129,20 +154,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         }
     }
-
+//todo expandable fab notif stopcount workmanager
     override fun createBinding(): ActivityMainBinding {
         return binding
     }
+    //todo use timber instead of println
     private fun observeProductData() {
         lifecycleScope.launch {
+            println(searchQuery)
             mainViewModel.paginatedProduct(true, searchQuery, chipQuery).collectLatest {
                 productAdapter.submitData(lifecycle,it)
-                binding.recyclerView.apply {
-                    layoutManager = LinearLayoutManager(this@MainActivity)
-                    adapter = productAdapter
-
                 }
             }
         }
-    }
+
 }

@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.example.mobileshop.BaseActivity
 import com.example.mobileshop.R
 import com.example.mobileshop.databinding.ActivityProductViewBinding
@@ -29,11 +30,13 @@ class ProductViewActivity : BaseActivity<ActivityProductViewBinding>() {
     private val productViewModel: ProductViewModel by viewModels()
     private val localImageAdapter by lazy { LocalImageAdapter() }
 
+
     private lateinit var product: Product
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=createBinding()
         setContentView(binding.root)
+
         val productId = intent.getIntExtra("singleItemData",1)
 
         initObservers(productId)
@@ -62,12 +65,14 @@ class ProductViewActivity : BaseActivity<ActivityProductViewBinding>() {
 
     private fun initViews(product: Product) {
         val builder = AlertDialog.Builder(this)
+
         with(binding){
                 title.text = product.title.toString()
                 brand.text = product.brand.toString()
                 category.text =product.category.toString()
                 description.text = product.description.toString()
-                Picasso.get().load(product.images[0]).resize(1000, 800).centerCrop().into(imgView)
+
+                Picasso.get().load(product.images[0]).resize(1000, 800).placeholder(R.drawable.progress_animation).centerInside().into(imgView)
                 initRecyclerView(product.id)
 
             fab.setOnClickListener {

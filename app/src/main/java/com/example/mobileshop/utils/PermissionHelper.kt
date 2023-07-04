@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.mobileshop.main_view.MainActivity
 
@@ -11,6 +12,15 @@ class PermissionHelper(private val activity: MainActivity)  {
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     var isReadPermissionGranted = false
     var isWritePermissionGranted = false
+    var isCameraPermissionGranted = false
+
+    fun requestCameraPermission() {
+
+        isCameraPermissionGranted = (ContextCompat.checkSelfPermission(activity,
+            android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)
+        if(!isCameraPermissionGranted)
+            ActivityCompat.requestPermissions(activity, arrayOf(android.Manifest.permission.CAMERA),100)
+    }
 
 
 

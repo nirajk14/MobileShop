@@ -20,11 +20,11 @@ object NetworkModule {
 
 
     @Provides
-    fun providesUrl()= "https://dummyjson.com/"
+    fun providesUrl()= "https://dummyjson.com/" //todo build.gradle file
     @Provides
     @Singleton
     fun providesTokenInterceptor(): TokenInterceptor {
-        val token = "random token"
+        val token = "random token" //todo local.properties
         return TokenInterceptor(token)
     }
 

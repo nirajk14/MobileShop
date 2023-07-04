@@ -5,12 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.mobileshop.utils.FlowState
 import com.example.mobileshop.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,7 +45,7 @@ class ProductViewModel @Inject constructor(private val mainRepository: MainRepos
 
     fun getImageUrl(productId: Int) = viewModelScope.launch {
         _localImageSharedFlow.emit(FlowState.Loading)
-        mainRepository.getLocalImagesForProduct(productId)
+        mainRepository.localImageDao.getLocalImagesForProduct(productId)
             .catch { e ->
                 _localImageSharedFlow.emit(FlowState.Failure(e))
             }

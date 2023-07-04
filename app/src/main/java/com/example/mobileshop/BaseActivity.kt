@@ -31,6 +31,10 @@ abstract class BaseActivity<T:ViewBinding> : AppCompatActivity() {
 
     }
 
+    fun View.hide() {
+        visibility = View.GONE
+    }
+
     fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
@@ -39,6 +43,7 @@ abstract class BaseActivity<T:ViewBinding> : AppCompatActivity() {
         val chip = Chip(this)
         chip.text = chipData
         chip.isClickable = true
+        chip.setChipBackgroundColorResource(R.color.gray)
         // Set any other customizations for the chip as needed
         return chip
 

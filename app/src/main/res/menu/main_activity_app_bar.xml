@@ -9,5 +9,11 @@
         android:contentDescription="Information"
         />
 
+    <item
+        android:id="@+id/camera"
+        android:title="Camera"
+        android:icon="@drawable/camera"
+        android:contentDescription="Camera"/>
+
 
 </menu>
