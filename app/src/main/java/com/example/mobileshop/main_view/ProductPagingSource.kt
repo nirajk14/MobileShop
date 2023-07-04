@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import com.example.mobileshop.network.ApiServiceImpl
 import com.example.mobileshop.model.Product
 import com.example.mobileshop.db.ProductDao
+import timber.log.Timber
 import java.lang.Exception
 
 class ProductPagingSource(
@@ -35,7 +36,7 @@ class ProductPagingSource(
             var nextKey: Int? = null
 
             val response = apiServiceImpl.getProducts(limit, skip)
-            println(response.products.size)
+//            Timber.i(response.products.size)
             if (insertDB)
                 insertProduct(response.products)
 

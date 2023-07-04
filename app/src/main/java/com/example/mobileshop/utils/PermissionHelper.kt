@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.mobileshop.main_view.MainActivity
+import timber.log.Timber
 
 class PermissionHelper(private val activity: MainActivity)  {
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
@@ -80,7 +81,7 @@ class PermissionHelper(private val activity: MainActivity)  {
         }
 
 
-        println(permissionRequest)
+//todo        Timber.d(permissionRequest)
 
 
         if (permissionRequest.isNotEmpty()){

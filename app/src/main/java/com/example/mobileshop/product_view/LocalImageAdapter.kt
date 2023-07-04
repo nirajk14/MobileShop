@@ -10,6 +10,7 @@ import com.example.mobileshop.R
 import com.example.mobileshop.model.LocalImageEntity
 import com.example.mobileshop.utils.MyDiffUtil
 import com.squareup.picasso.Picasso
+import timber.log.Timber
 
 class LocalImageAdapter():
     RecyclerView.Adapter<LocalImageAdapter.LocalImageViewHolder>() {
@@ -36,7 +37,7 @@ class LocalImageAdapter():
 
 //        Picasso.get().load("https://www.bollywoodhungama.com/wp-content/uploads/2019/06/Anil-Kapoor-cant-stop-laughing-after-Majnu-Bhais-painting-from-Welcome-travels-to-Buckingham-Palace.jpg").resize(600,600).centerCrop().into(holder.imageViewLocal)
         val currentItem = listLocalImages[position].imageUrl
-        println("I think you should see recycler view coz look $currentItem")
+        Timber.i("I think you should see recycler view coz look $currentItem")
         if (currentItem != null) {
             if (currentItem.isEmpty())
                 Picasso.get().load("file:///android_res/drawable/blank_image.png").resize(600,600).centerCrop().into(holder.imageViewLocal)

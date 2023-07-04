@@ -22,6 +22,7 @@ import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -50,14 +51,14 @@ class ProductViewActivity : BaseActivity<ActivityProductViewBinding>() {
         lifecycleScope.launch {
             productViewModel.productStateFlow.collectLatest {
                 when(it){
-                    is FlowState.Loading-> println("Loading Product Data")
-                    is FlowState.Failure->println("Product Data load failed Reason: ${it.msg}")
+                    is FlowState.Loading-> Timber.i("Loading Product Data")
+                    is FlowState.Failure->Timber.i("Product Data load failed Reason: ${it.msg}")
                     is FlowState.SuccessProduct-> {
-                        println("Loading Success")
+                        Timber.i("Loading Success")
                         product=it.data
                         initViews(product)
                     }
-                    else -> println("Empty Product Data")
+                    else -> Timber.d("Empty Product Data")
                 }
             }
         }
@@ -103,23 +104,23 @@ class ProductViewActivity : BaseActivity<ActivityProductViewBinding>() {
                 productViewModel.localImageSharedFlow.collectLatest {
                     when (it) {
                         is FlowState.Loading -> {
-                            println("Loading $id data")
+                            Timber.i("Loading $id data")
                         }
 
                         is FlowState.Failure -> {
-                            println("Failed the message is ${it.msg}")
+                            Timber.i("Failed the message is ${it.msg}")
                         }
 
                         is FlowState.SuccessProductWithLocalImage -> {
 
                             if (it.data != null) {
-                                println("I think you should see recycler view")
+                                Timber.i("I think you should see recycler view")
                                 adaptToRecyclerView(it.data)
                             }
                         }
 
                         else -> {
-                            println("Local Image Data is empty no recycler view will be displayed")
+                            Timber.i("Local Image Data is empty no recycler view will be displayed")
                         }
                     }
                 }

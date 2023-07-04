@@ -2,31 +2,25 @@ package com.example.mobileshop.main_view
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.mobileshop.databinding.ActivityMainBinding
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.marginLeft
-import androidx.recyclerview.widget.RecyclerView
-import androidx.room.util.query
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mobileshop.BaseActivity
-import com.example.mobileshop.utils.PermissionHelper
 import com.example.mobileshop.R
+import com.example.mobileshop.databinding.ActivityMainBinding
 import com.example.mobileshop.product_view.ProductViewActivity
 import com.example.mobileshop.utils.FlowState
-import com.google.android.material.chip.Chip
+import com.example.mobileshop.utils.PermissionHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -50,7 +44,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var chipQuery: MutableList<String> = mutableListOf()
     private var searchJob: Job? = null
 
-    private val queryTextChanges: MutableSharedFlow<String?> = MutableSharedFlow()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        setSupportActionBar(findViewById(R.id.mainAppBar))
@@ -132,10 +125,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         for(chipData in it.category){
                             val chip = createChip(chipData)
                             chip.isCheckable=true
-                            chip.setOnCheckedChangeListener { buttonView, isChecked ->
+                            chip.setOnCheckedChangeListener { _, isChecked ->
                                 if (isChecked){
                                     chip.setChipBackgroundColorResource(R.color.orange)
-                                    println(chip.text)
+//                                    Timber.i(chip.text)
                                     chipQuery.add(chip.text as String)
                                     observeProductData()
                                 }
@@ -148,7 +141,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             binding.chipGroupMain.addView(chip)
                         }
                     }
-                    else -> println("Something went wrong, for detailed debugging add failure and loading states")
+                    else -> Timber.i("Something went wrong, for detailed debugging add failure and loading states")
                 }
             }
 
@@ -158,10 +151,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun createBinding(): ActivityMainBinding {
         return binding
     }
-    //todo use timber instead of println
+    //todo use timber instead of Timber.i
     private fun observeProductData() {
         lifecycleScope.launch {
-            println(searchQuery)
+            Timber.i(searchQuery)
             mainViewModel.paginatedProduct(true, searchQuery, chipQuery).collectLatest {
                 productAdapter.submitData(lifecycle,it)
                 }
