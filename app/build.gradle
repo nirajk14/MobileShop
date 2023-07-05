@@ -10,11 +10,19 @@ android {
     compileSdk 33
 
     defaultConfig {
+        Properties properties = new Properties()
+        if (project.rootProject.file('local.properties').canRead()) {
+            properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        }
+
         applicationId "com.example.mobileshop"
         minSdk 24
         targetSdk 33
         versionCode 1
         versionName "1.0"
+        buildConfigField("String","API_URL","\"https://dummyjson.com/\"")
+        buildConfigField('String', 'TOKEN', properties.getProperty('token', '"xxx"'))
+
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

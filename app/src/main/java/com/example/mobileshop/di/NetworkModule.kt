@@ -1,5 +1,6 @@
 package com.example.mobileshop.di
 
+import com.example.mobileshop.BuildConfig
 import com.example.mobileshop.network.ApiService
 import com.example.mobileshop.network.ApiServiceImpl
 import com.example.mobileshop.network.TokenInterceptor
@@ -20,11 +21,11 @@ object NetworkModule {
 
 
     @Provides
-    fun providesUrl()= "https://dummyjson.com/" //todo build.gradle file
+    fun providesUrl()= BuildConfig.API_URL //done in build.gradle file
     @Provides
     @Singleton
     fun providesTokenInterceptor(): TokenInterceptor {
-        val token = "random token" //todo local.properties
+        val token = BuildConfig.TOKEN//todo local.properties probably done
         return TokenInterceptor(token)
     }
 

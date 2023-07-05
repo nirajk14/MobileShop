@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">MobileShop</string>
+    <string name="brand">Brand</string>
+    <string name="colon">:</string>
+    <string name="category">Category</string>
+    <string name="description">Description</string>
+    <string name="show_fab">Show Fab</string>
+    <string name="gallery">Gallery</string>
+    <string name="notification">Notification</string>
+    <string name="channel_name">Whatever</string>
+    <string name="channel_description">Notification is working</string>
 </resources>

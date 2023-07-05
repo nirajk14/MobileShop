@@ -14,6 +14,10 @@
         android:id="@+id/includedSingle"
         layout="@layout/toolbar"/>
 
+    <include
+        android:id="@+id/includedPBP"
+        layout="@layout/progress_bar" />
+
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/circularProgressBar"
         android:layout_width="wrap_content"
@@ -63,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
-        android:text="Brand"
+        android:text="@string/brand"
         android:textColor="@color/black"
         app:layout_constraintEnd_toStartOf="@id/topColon"
         app:layout_constraintStart_toStartOf="parent"
@@ -76,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="210dp"
-        android:text=":"
+        android:text="@string/colon"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -103,7 +107,7 @@
         app:layout_constraintTop_toBottomOf="@id/topColon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/midColon"
-        android:text="Category"
+        android:text="@string/category"
         android:textColor="@color/black"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
@@ -115,7 +119,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="210dp"
-        android:text=":"
+        android:text="@string/colon"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -140,7 +144,7 @@
         app:layout_constraintTop_toBottomOf="@id/midColon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/botColon"
-        android:text="Description"
+        android:text="@string/description"
         android:textColor="@color/black"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
@@ -152,7 +156,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="210dp"
-        android:text=":"
+        android:text="@string/colon"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -186,6 +190,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
+        android:contentDescription="@string/show_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -194,6 +199,30 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:backgroundTint="#8C8C8C"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabGallery"
+        android:contentDescription="@string/gallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/camera"
+        app:layout_constraintBottom_toTopOf="@id/fabNotif"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="#8C8C8C"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabNotif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#8C8C8C"
+        android:contentDescription="@string/notification"
+        android:src="@drawable/notif"
+        app:layout_constraintBottom_toTopOf="@id/fab"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,16 +4,17 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.mobileshop.main_view.MainActivity
-import timber.log.Timber
 
-class PermissionHelper(private val activity: MainActivity)  {
+class PermissionHelper(private val activity: AppCompatActivity)  {
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     var isReadPermissionGranted = false
     var isWritePermissionGranted = false
     var isCameraPermissionGranted = false
+    var isNotificationPermissionGranted = false
 
     fun requestCameraPermission() {
 
@@ -21,6 +22,14 @@ class PermissionHelper(private val activity: MainActivity)  {
             android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)
         if(!isCameraPermissionGranted)
             ActivityCompat.requestPermissions(activity, arrayOf(android.Manifest.permission.CAMERA),100)
+    }
+
+    fun requestNotificationPermission(){
+        isNotificationPermissionGranted = (ContextCompat.checkSelfPermission(activity,
+            android.Manifest.permission.POST_NOTIFICATIONS)==PackageManager.PERMISSION_GRANTED)
+        if(!isNotificationPermissionGranted)
+            ActivityCompat.requestPermissions(activity, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),101)
+
     }
 
 
@@ -80,8 +89,6 @@ class PermissionHelper(private val activity: MainActivity)  {
             permissionRequest.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
 
-
-//todo        Timber.d(permissionRequest)
 
 
         if (permissionRequest.isNotEmpty()){

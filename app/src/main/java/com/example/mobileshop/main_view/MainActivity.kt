@@ -31,9 +31,23 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private val productAdapter = ProductPagingAdapter { product->
+        hideOtherViews()
+        showProgressBar()
+
         val intent = Intent(this, ProductViewActivity::class.java)
         intent.putExtra("singleItemData", product.id)
-        startActivity(intent)
+        lifecycleScope.launch { delay(100L)  }. invokeOnCompletion {
+            startActivity(intent) }
+    }
+
+    private fun hideOtherViews() {
+        with(binding){
+            recyclerView.hide()
+        }
+    }
+
+    private fun showProgressBar() {
+        binding.includedPB.progressBar.show()
     }
 
 
@@ -46,15 +60,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setSupportActionBar(findViewById(R.id.mainAppBar))
         builder = AlertDialog.Builder(this)
         permissionHelper.requestPermission()
         initViews()
         initObservers()
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.includedPB.progressBar.hide()
+        binding.recyclerView.show()
+    }
+
     private fun initViews() {
         with(binding) {
+            includedPB.progressBar.hide()
             recyclerView.apply {
                 layoutManager = LinearLayoutManager(this@MainActivity)
                 adapter = productAdapter
@@ -77,8 +97,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         observeProductData()
                     }
 
-
-//                    recyclerView.scrollToPosition(0)
                     return true
                 }
             })
@@ -87,10 +105,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                swipeRefresh.isRefreshing = false
             }
             with(includedMain){
-//            with(backButton) {
-//                visibility=View.GONE
-//                //done use extension function for visibility
-//            }
                 backButton.hide()
             mainAppBar.setOnMenuItemClickListener{ menuItem ->
                 when (menuItem.itemId) {
@@ -113,7 +127,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     }
 
-    //todo sonarlint
+
 
     private fun observeChipGroupData() {
         lifecycleScope.launch {
@@ -128,7 +142,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             chip.setOnCheckedChangeListener { _, isChecked ->
                                 if (isChecked){
                                     chip.setChipBackgroundColorResource(R.color.orange)
-//                                    Timber.i(chip.text)
                                     chipQuery.add(chip.text as String)
                                     observeProductData()
                                 }
@@ -151,7 +164,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun createBinding(): ActivityMainBinding {
         return binding
     }
-    //todo use timber instead of Timber.i
     private fun observeProductData() {
         lifecycleScope.launch {
             Timber.i(searchQuery)
