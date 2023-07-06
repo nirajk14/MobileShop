@@ -3,6 +3,8 @@ package com.example.mobileshop.product_view
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +17,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.example.mobileshop.BaseActivity
 import com.example.mobileshop.R
 import com.example.mobileshop.databinding.ActivityProductViewBinding
@@ -23,8 +27,10 @@ import com.example.mobileshop.model.Product
 import com.example.mobileshop.utils.Constants.CHANNEL_ID
 import com.example.mobileshop.utils.FlowState
 import com.example.mobileshop.utils.PermissionHelper
+import com.example.mobileshop.worker.CountDownWorker
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -37,21 +43,37 @@ class ProductViewActivity : BaseActivity<ActivityProductViewBinding>() {
     private val localImageAdapter by lazy { LocalImageAdapter() }
     private var aBoolean = true
 
-    var notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
-        .setSmallIcon(R.drawable.notification_bar_icon)
-        .setContentTitle("LOL")
-        .setContentText("It's me DIO")
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+    private lateinit var imageBitmap: Bitmap
+
 
 
     private lateinit var product: Product
     private val permissionHelper: PermissionHelper = PermissionHelper(this)
+
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=createBinding()
         setContentView(binding.root)
         binding.includedPBP.progressBar.show()
+        imageBitmap = BitmapFactory.decodeResource(resources, R.drawable.meme)
+
+        var notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.notification_bar_icon)
+            .setContentTitle("Actual Notification")
+            .setContentText("Lorem Ipsum this notification is important, very important, very very very important")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        val notificationBuilder2 = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.notification_bar_icon)
+            .setContentTitle("LOL")
+            .setContentText("It's me DIO")
+            .setLargeIcon(imageBitmap)
+            .setStyle(NotificationCompat.BigPictureStyle()
+                .bigPicture(imageBitmap)
+                .bigLargeIcon(null))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
 
 
         val productId = intent.getIntExtra("singleItemData",1)
@@ -61,11 +83,19 @@ class ProductViewActivity : BaseActivity<ActivityProductViewBinding>() {
             with(NotificationManagerCompat.from(this)) {
                 // notificationId is a unique int for each notification that you must define
                 permissionHelper.requestNotificationPermission()
-                notify(1, notificationBuilder.build())
+                startWorker()
+
+//                lifecycleScope.launch { delay(20000L) }.invokeOnCompletion { notify(1, notificationBuilder2.build()) }
             }
         }
 
 
+    }
+
+    private fun startWorker() {
+        val workManager = WorkManager.getInstance(applicationContext)
+        val workRequest = OneTimeWorkRequest.Builder(CountDownWorker::class.java).build()
+        workManager.enqueue(workRequest)
     }
 
 

@@ -31,13 +31,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private val productAdapter = ProductPagingAdapter { product->
-        hideOtherViews()
+//        hideOtherViews()
         showProgressBar()
 
         val intent = Intent(this, ProductViewActivity::class.java)
         intent.putExtra("singleItemData", product.id)
-        lifecycleScope.launch { delay(100L)  }. invokeOnCompletion {
-            startActivity(intent) }
+//        lifecycleScope.launch { delay(100L)  }. invokeOnCompletion {
+            startActivity(intent)
     }
 
     private fun hideOtherViews() {
@@ -166,7 +166,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
     private fun observeProductData() {
         lifecycleScope.launch {
-            Timber.i(searchQuery)
+            Timber.i("this is a search %s",searchQuery)
             mainViewModel.paginatedProduct(true, searchQuery, chipQuery).collectLatest {
                 productAdapter.submitData(lifecycle,it)
                 }
