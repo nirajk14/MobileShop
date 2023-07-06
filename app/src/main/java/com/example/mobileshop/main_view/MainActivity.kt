@@ -64,6 +64,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         permissionHelper.requestPermission()
         initViews()
         initObservers()
+
     }
 
     override fun onResume() {
@@ -89,7 +90,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-//                    setSearchQuery()
+//                   Contains debouncer implementation
                     searchJob?.cancel()
                     searchQuery=newText
                     searchJob= CoroutineScope(Dispatchers.Main).launch {

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,6 +18,18 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val mainRepository: MainRepository) : ViewModel() {
 //    val flow = mainRepository.getProducts()
 //        .cachedIn(viewModelScope)
+//
+//    val countDownFlow = flow {
+//        val startingValue= 10
+//        var currentValue= startingValue
+//        emit(startingValue)
+//        while (currentValue > 0){
+//            kotlinx.coroutines.delay(1000L)
+//            currentValue--
+//            emit(currentValue)
+//        }
+//
+//    }
 
     private val _productCategoryStateFlow: MutableStateFlow<FlowState> = MutableStateFlow(FlowState.Empty)
     val productCategoryStateFlow: StateFlow<FlowState> = _productCategoryStateFlow

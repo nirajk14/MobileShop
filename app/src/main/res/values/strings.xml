@@ -10,6 +10,6 @@
     <string name="channel_name">Whatever</string>
     <string name="channel_description">Notification is working</string>
     <string name="image">image</string>
-    <string name="templatetext">templateText</string>
+    <string name="template_text">templateText</string>
     <string name="toolbar_title">Mobile Shop Application</string>
 </resources>

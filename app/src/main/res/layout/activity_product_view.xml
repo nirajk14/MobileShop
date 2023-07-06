@@ -195,10 +195,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_add"
+        android:src="@drawable/ic_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:backgroundTint="#8C8C8C"/>
+        android:backgroundTint="#8C8C8C"
+        app:backgroundTint="@color/white"
+        android:backgroundTintMode="add"
+        app:backgroundTintMode="multiply"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabGallery"
@@ -211,7 +214,10 @@
         app:layout_constraintBottom_toTopOf="@id/fabNotif"
         app:layout_constraintEnd_toEndOf="parent"
         android:backgroundTint="#8C8C8C"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:backgroundTint="@color/white"
+        android:backgroundTintMode="add"
+        app:backgroundTintMode="multiply"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabNotif"
@@ -224,7 +230,10 @@
         android:src="@drawable/notif"
         app:layout_constraintBottom_toTopOf="@id/fab"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:backgroundTint="@color/white"
+        android:backgroundTintMode="add"
+        app:backgroundTintMode="multiply"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
